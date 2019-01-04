@@ -15,10 +15,10 @@ panels.core_radius = 0.01
 xvort1 = np.zeros((500,2))
 vel1 = np.zeros((500,2))
 q = np.zeros((500,2))
-a = 100
+a = 86
 
 
-for i in range (100, 500):
+for i in range (86, 500):
     
     i = i * 0.1
     q[a,0] = 15
@@ -35,10 +35,10 @@ print vel1
 xvort2 = np.zeros((500,2))
 vel2 = np.zeros((500,2))
 q = np.zeros((500,2))
-a = 0
+a = 41
 
 
-for i in range (0, 500):
+for i in range (41, 500):
     
     i = i * 0.1
     q[a,0] = 15
@@ -51,6 +51,7 @@ for i in range (0, 500):
 
 print xvort2 
 print vel2
+
 
 # x = 15
 # y = 1
