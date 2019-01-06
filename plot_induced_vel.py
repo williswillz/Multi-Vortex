@@ -41,7 +41,7 @@ for i in range (0, 500):
     i = i * 0.1
     xvort2[a,0] = i
     xvort2[a,1] = 0
-    vel2[:,:] = panels.induced_velocity_single(q, xvort2, -0.4)
+    vel2[:,:] = panels.induced_velocity_single(q, xvort2, -0.24)
     a = a + 1
 
 
