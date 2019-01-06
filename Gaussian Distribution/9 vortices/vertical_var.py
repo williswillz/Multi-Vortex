@@ -10,6 +10,8 @@ from pylab import *
 panels = Vortices()
 panels.core_radius = 0.01
 
+# vortex 1
+# starts from (0,0) to (50,0)
 
 xvort1 = np.zeros((500,2))
 vel1 = np.zeros((500,2))
