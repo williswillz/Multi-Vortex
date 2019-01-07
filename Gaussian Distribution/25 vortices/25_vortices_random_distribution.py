@@ -28,7 +28,7 @@ for i in range (0, 500):
     q[a,0] = 25 #observation point
     q[a,1] = 0
     xvort1[a,0] = i
-    xvort1[a,1] = -0.88
+    xvort1[a,1] = random.uniform(-1,0)
     vel1[:,:] = panels.induced_velocity_single(q, xvort1, random.uniform(-1,1))
     a = a + 1
 
@@ -48,7 +48,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort2[a,0] = i
-    xvort2[a,1] = -0.77
+    xvort2[a,1] = random.uniform(-1,0)
     vel2[:,:] = panels.induced_velocity_single(q, xvort2, random.uniform(-1,1))
     a = a + 1
 
@@ -64,7 +64,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort3[a,0] = i
-    xvort3[a,1] = -0.66
+    xvort3[a,1] = random.uniform(-1,0)
     vel3[:,:] = panels.induced_velocity_single(q, xvort3, random.uniform(-1,1))
     a = a + 1
 
@@ -80,7 +80,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort4[a,0] = i
-    xvort4[a,1] = -0.55
+    xvort4[a,1] = random.uniform(-1,0)
     vel4[:,:] = panels.induced_velocity_single(q, xvort4, random.uniform(-1,1))
     a = a + 1
 
@@ -96,7 +96,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort5[a,0] = i
-    xvort5[a,1] = -0.44
+    xvort5[a,1] = random.uniform(-1,0)
     vel5[:,:] = panels.induced_velocity_single(q, xvort5, random.uniform(-1,1))
     a = a + 1
 
@@ -113,7 +113,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort6[a,0] = i
-    xvort6[a,1] = -0.33
+    xvort6[a,1] = random.uniform(-1,0)
     vel6[:,:] = panels.induced_velocity_single(q, xvort6, random.uniform(-1,1))
     a = a + 1
 
@@ -129,7 +129,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort7[a,0] = i
-    xvort7[a,1] = -0.22
+    xvort7[a,1] = random.uniform(-1,0)
     vel7[:,:] = panels.induced_velocity_single(q, xvort7, random.uniform(-1,1))
     a = a + 1
 
@@ -145,7 +145,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort8[a,0] = i
-    xvort8[a,1] = -0.11
+    xvort8[a,1] = random.uniform(-1,0)
     vel8[:,:] = panels.induced_velocity_single(q, xvort8, random.uniform(-1,1))
     a = a + 1
 
@@ -161,7 +161,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort9[a,0] = i
-    xvort9[a,1] = 0.11
+    xvort9[a,1] = random.uniform(0,1)
     vel9[:,:] = panels.induced_velocity_single(q, xvort9, random.uniform(-1,1))
     a = a + 1
 
@@ -177,7 +177,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort10[a,0] = i
-    xvort10[a,1] = 0.22
+    xvort10[a,1] = random.uniform(0,1)
     vel10[:,:] = panels.induced_velocity_single(q, xvort10, random.uniform(-1,1))
     a = a + 1
 
@@ -193,7 +193,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort11[a,0] = i
-    xvort11[a,1] = 0.33
+    xvort11[a,1] = random.uniform(0,1)
     vel11[:,:] = panels.induced_velocity_single(q, xvort11, random.uniform(-1,1))
     a = a + 1
 
@@ -209,7 +209,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort12[a,0] = i
-    xvort12[a,1] = 0.44
+    xvort12[a,1] = random.uniform(0,1)
     vel12[:,:] = panels.induced_velocity_single(q, xvort12, random.uniform(-1,1))
     a = a + 1
 
@@ -225,7 +225,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort13[a,0] = i
-    xvort13[a,1] = 0.55
+    xvort13[a,1] = random.uniform(0,1)
     vel13[:,:] = panels.induced_velocity_single(q, xvort13, random.uniform(-1,1))
     a = a + 1
 
@@ -241,7 +241,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort14[a,0] = i
-    xvort14[a,1] = 0.66
+    xvort14[a,1] = random.uniform(0,1)
     vel14[:,:] = panels.induced_velocity_single(q, xvort14, random.uniform(-1,1))
     a = a + 1
 
@@ -257,7 +257,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort15[a,0] = i
-    xvort15[a,1] = 0.77
+    xvort15[a,1] = random.uniform(0,1)
     vel15[:,:] = panels.induced_velocity_single(q, xvort15, random.uniform(-1,1))
     a = a + 1
 
@@ -273,7 +273,7 @@ for i in range (0, 500):
     q[a,0] = 25
     q[a,1] = 0
     xvort16[a,0] = i
-    xvort16[a,1] = 0.88
+    xvort16[a,1] = random.uniform(0,1)
     vel16[:,:] = panels.induced_velocity_single(q, xvort16, random.uniform(-1,1))
     a = a + 1
 
@@ -411,4 +411,19 @@ fig, ax = plt.subplots()
 ax.plot(xf, 2.0/N * np.abs(yf[:N//2]))
 ax.set_xscale('log')
 savefig('frequency_(5,1)'+str(N)+str(number_of_vortices)+'.pdf')
+plt.show()
+
+# Number of samplepoints
+N = 500
+# sample spacing
+T = 1.0 / 250
+x = np.linspace(0.0, N*T, N)
+y = vel_tot_mag**2
+yf = scipy.fftpack.fft(y)
+xf = np.linspace(0.0, 1.0/(2.0*T), N/2)
+
+fig, ax = plt.subplots()
+ax.plot(xf, 2.0/N * np.abs(yf[:N//2]))
+ax.set_xscale('log')
+savefig('frequency_vsquare(5,1)'+str(N)+str(number_of_vortices)+'.pdf')
 plt.show()
