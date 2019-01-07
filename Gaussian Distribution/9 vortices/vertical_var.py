@@ -10,6 +10,8 @@ from pylab import *
 panels = Vortices()
 panels.core_radius = 0.01
 
+number_of_vortices = 10
+
 # vortex 1
 # starts from (0,0) to (50,0)
 
@@ -205,7 +207,7 @@ v8 = plt.plot(t, vel8[:,1], c='g', label='-0.48, v')
 u9 = plt.plot(t, vel9[:,0], c='m', label='-0.48, u')
 v9 = plt.plot(t, vel9[:,1], c='c', label='-0.48, v')
 plt.legend(loc='upper right')
-savefig('vertical_var_induced_velocity_individual_vortices.pdf')
+savefig(str(number_of_vortices)+'_vortices_uv_velocity.pdf')
 plt.show()
 
 fig, ax = plt.subplots()
@@ -228,7 +230,7 @@ u8 = plt.plot(t, vel8[:,0], c='k', label='-0.48, u')
 u9 = plt.plot(t, vel9[:,0], c='m', label='-0.48, u')
 #v9 = plt.plot(t, vel9[:,1], c='c', label='-0.48, v')
 plt.legend(loc='upper right')
-savefig('vertical_var_induced_velocity_u_individual_vortices.pdf')
+savefig(str(number_of_vortices)+'_vortices_u_velocity.pdf')
 plt.show()
 
 fig, ax = plt.subplots()
@@ -251,7 +253,7 @@ v8 = plt.plot(t, vel8[:,1], c='g', label='-0.48, v')
 #u9 = plt.plot(t, vel9[:,0], c='m', label='-0.48, u')
 v9 = plt.plot(t, vel9[:,1], c='c', label='-0.48, v')
 plt.legend(loc='upper right')
-savefig('vertical_var_induced_velocity_v_#individual_vortices.pdf')
+savefig(str(number_of_vortices)+'_vortices_v_velocity.pdf')
 plt.show()
 
 fig, ax = plt.subplots()
@@ -259,7 +261,7 @@ vx10 = plt.plot(t, vel10[:,0], c='r', label='x_tangential')
 vy10 = plt.plot(t, vel10[:,1], c='g', label='y_tangential')
 v10_mag = plt.plot(t, vel10_mag[:], c='b', label='induced_velocity')
 plt.legend(loc='best')
-savefig('vertical_var_induced_velocity_vortices.pdf')
+savefig(str(number_of_vortices)+'_vortices_total_velocity.pdf')
 plt.show()
 
 
