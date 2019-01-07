@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from pylab import *
 import scipy.fftpack
 
+
 panels = Vortices()
 panels.core_radius = 0.01
 q = np.zeros((500,2))
@@ -15,7 +16,7 @@ a = 85
 
 for i in range (85, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort1[a,0] = i
     xvort1[a,1] = 0
@@ -32,7 +33,7 @@ a = 41
 
 for i in range (41, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort2[a,0] = i
     xvort2[a,1] = 0
@@ -50,7 +51,7 @@ a = 78
 
 for i in range (78, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort3[a,0] = i
     xvort3[a,1] = 0
@@ -66,7 +67,7 @@ a = 62
 
 for i in range (62, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort4[a,0] = i
     xvort4[a,1] = 0
@@ -84,7 +85,7 @@ a = 23
 
 for i in range (23, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort5[a,0] = i
     xvort5[a,1] = 0
@@ -102,7 +103,7 @@ a = 5
 
 for i in range (5, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort6[a,0] = i
     xvort6[a,1] = 0
@@ -120,7 +121,7 @@ a = 38
 
 for i in range (38, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort7[a,0] = i
     xvort7[a,1] = 0
@@ -138,7 +139,7 @@ a = 35
 
 for i in range (35, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort8[a,0] = i
     xvort8[a,1] = 0
@@ -156,7 +157,7 @@ a = 35
 
 for i in range (35, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort9[a,0] = i
     xvort9[a,1] = 0
@@ -174,7 +175,7 @@ a = 90
 
 for i in range (90, 500):
     i = i * 0.1
-    q[a,0] = 10
+    q[a,0] = 5
     q[a,1] = 1
     xvort10[a,0] = i
     xvort10[a,1] = 0
@@ -242,14 +243,6 @@ v3_mag = plt.plot(t, vel_tot_mag[:], c='b', label='induced_velocity')
 plt.legend(loc='best')
 savefig('induced_velocity_10_10_sahitya.pdf')
 plt.show()
-
-
-# print vel  
-
-# plt.plot(x,vel[:,0], '-x', label="u")
-# plt.plot(x,vel[:,1], '-+', label="v")
-# plt.legend()
-# plt.show()
 
 # Number of samplepoints
 N = 500
