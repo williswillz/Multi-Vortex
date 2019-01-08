@@ -76,6 +76,9 @@ for i in range (62, 500):
 444
 =======
 
+<<<<<<< HEAD
+>>>>>>> a1aaa7bdd62ef9ed06ea8f83c8ed1361d739dbb5
+=======
 >>>>>>> a1aaa7bdd62ef9ed06ea8f83c8ed1361d739dbb5
 print xvort4
 print vel4
