@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from pylab import *
 import scipy.fftpack
 
-
 panels = Vortices()
 panels.core_radius = 0.01
 q = np.zeros((500,2))
@@ -73,8 +72,11 @@ for i in range (62, 500):
     xvort4[a,1] = 0
     vel4[:,:] = panels.induced_velocity_single(q, xvort4, 0.7060)
     a = a + 1
+<<<<<<< HEAD
+444
+=======
 
-
+>>>>>>> a1aaa7bdd62ef9ed06ea8f83c8ed1361d739dbb5
 print xvort4
 print vel4
 
@@ -245,6 +247,13 @@ savefig('induced_velocity_10_10_sahitya.pdf')
 plt.show()
 
 
+# print vel  
+
+# plt.plot(x,vel[:,0], '-x', label="u")
+# plt.plot(x,vel[:,1], '-+', label="v")
+# plt.legend()
+# plt.show()
+
 # Number of samplepoints
 N = 500
 # sample spacing
@@ -257,5 +266,5 @@ xf = np.linspace(0.0, 1.0/(2.0*T), N/2)
 fig, ax = plt.subplots()
 ax.plot(xf, 2.0/N * np.abs(yf[:N//2]))
 ax.set_xscale('log')
-savefig('frequency_'+str(N)+str(number_of_vortices)+'.pdf')
+savefig('frequency_(10,1)'+str(N)+str(number_of_vortices)+'.pdf')
 plt.show()

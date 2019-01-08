@@ -4,8 +4,11 @@ import matplotlib.pyplot as plt
 from pylab import *
 import scipy.fftpack
 
+<<<<<<< HEAD
 
 panels = Vortices()
+=======
+>>>>>>> a1aaa7bdd62ef9ed06ea8f83c8ed1361d739dbb5
 panels.core_radius = 0.01
 q = np.zeros((500,2))
 number_of_vortices = 10
