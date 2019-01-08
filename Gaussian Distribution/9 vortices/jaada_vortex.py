@@ -72,7 +72,14 @@ for i in range (62, 500):
     xvort4[a,1] = 0
     vel4[:,:] = panels.induced_velocity_single(q, xvort4, 0.7060)
     a = a + 1
+<<<<<<< HEAD
+444
+=======
 
+<<<<<<< HEAD
+>>>>>>> a1aaa7bdd62ef9ed06ea8f83c8ed1361d739dbb5
+=======
+>>>>>>> a1aaa7bdd62ef9ed06ea8f83c8ed1361d739dbb5
 print xvort4
 print vel4
 
