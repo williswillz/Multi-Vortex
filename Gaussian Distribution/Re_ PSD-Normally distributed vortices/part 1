@@ -1,0 +1,204 @@
+Dear Mr. Sharma,
+
+I am appending the code I just wrote for the problem. It runs fast 
+enough that I can treat 10000 vortices and 2000 timesteps in about 1 s 
+on my laptop.
+
+I recommend that you look at the jupyter notebook .ipynb to be able to 
+play interactively with the parameters. I have done so and already 
+learned a lot about what happens if I change something.
+
+I also tested three different vortex models and found the simple 1/r 
+most promising (see code). However I did not fit the results for E11 and 
+E22 to what the von Karman model gives, so I have no idea yet if this is 
+really usable.
+
+Please feel free to use and extend  the code to make progress on the 
+statistical model.
+
+Best regards,
+
+Ennes Sarradj
+
+P.S.: I noticed that you still use Python 2. I would recommend to 
+upgrade to Python 3.
+
+
+Am 16.01.19 um 19:40 schrieb Sparsh Sharma:
+> Dear Professor,
+>
+> Thank you very much for looking into my code.
+>
+> There's a slight misunderstanding between two variables, x and xvort.
+> x (q in the declaration) = location of the vortices
+> xvort (xvort1 in the declaration) = observation point which is moving 
+> from (0,0) to (50,0)
+>
+> And, thank you so much for pointing out the summation error. I am 
+> fixing it right now.
+> This summation error happened probably because in my previous approach 
+> I was keeping the observation point stationary whereas a single gust 
+> of vortices (22 vortices) was injected and convected across the 
+> domain. The velocities were added later on there. Nevertheless, I'll 
+> fix this right away.
+>
+> I was not commenting anywhere in my code, which I know is not 
+> appreciated. I'll make it more readable now.
+>
+> Thanks and best regards,
+>
+>
+> Quoting Ennes Sarradj <ennes.sarradj@tu-berlin.de>:
+>
+>> Dear Mr. Sharma,
+>>
+>> I found a serious error in your code. You do not sum over the 
+>> vortices, but consider only one vortex per time step (location). See 
+>> line 60 of your code
+>>
+>> Best regards,
+>>
+>> Ennes Sarradj
+>>
+>> Am 16.01.19 um 17:43 schrieb Ennes Sarradj:
+>>> Dear Mr. Sharma,
+>>>
+>>> I think&nbsp; it makes no sense at all to take FFT or PSD of the 
+>>> magnitude U! Instead, it is the components u, v&nbsp; we have to 
+>>> use. I have tried this and found different results for the PSD of u 
+>>> and v. Looking into this revealed that u and v have a totally 
+>>> different probability distribution. This lets me think that there 
+>>> must be something wrong with your code. Your code, however, is 
+>>> really bad to debug. Variables are defined at will and are mixed 
+>>> with constants. The only thing I found is that your velocity field 
+>>> formulation is different from what you have used before in your 
+>>> manuscripts/papers.
+>>>
+>>> I urge you to try and make everything reproducible and well 
+>>> documented. You finally will have to report on the outcome of what 
+>>> you did. At the moment this seems to be impossible because it is not 
+>>> clear what you did and why.
+>>>
+>>> If I find the time I will try to write a short script that really 
+>>> does what we discussed at our last meetings.
+>>>
+>>> Best regards,
+>>>
+>>> Ennes Sarradj
+>>>
+>>>
+>>> Am 16.01.19 um 15:52 schrieb Sparsh Sharma:
+>>>> Dear Professor,
+>>>>
+>>>> 1) I have tried the uniform distribution for the y-position, and as 
+>>>> your expectations, we do not see any significant difference. This 
+>>>> may be because of less number of vortices, nonetheless, I'll have 
+>>>> to try testing the cases with different possibilities.
+>>>>
+>>>> 2) The size (core radii) are the vortices are kept variable this 
+>>>> time with normal distribution between 0 and 1. The velocity 
+>>>> fluctuation curve seems to have more spikes than in the case with a 
+>>>> constant radius for all vortices.
+>>>>
+>>>> 3) For FFT and PSD, I took the resultant velocity [(U = (u**2 + 
+>>>> v**2)*0.5]
+>>>>
+>>>> For your reference, I am attaching the script here within.
+>>>>
+>>>> Best,
+>>>>
+>>>> Sparsh
+>>>>
+>>>> Quoting Ennes Sarradj <ennes.sarradj@tu-berlin.de>:
+>>>>
+>>>>> Dear Mr. Sharma.
+>>>>>
+>>>>> as we discussed last week, I think a uniform distribution for the 
+>>>>> y-position would be more appropriate. I would however not expect a 
+>>>>> great difference.
+>>>>>
+>>>>> It would be much more interesting to see what the effect of 
+>>>>> non-constant size is.
+>>>>>
+>>>>> As to the plots, it is not quite clear to me what FFT and PSD of 
+>>>>> the induced velocity are. Velocity is a vector quantity, so you 
+>>>>> can compute FFT or PSD only for one component.
+>>>>>
+>>>>> Also, for both FFT and PSD the full parameters you used would be 
+>>>>> of interest. Number of samples, number of averages, window size, etc.
+>>>>>
+>>>>> The size distribution of the vortices was normal as before?
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>> Ennes Sarradj
+>>>>>
+>>>>> Am 15.01.19 um 15:44 schrieb Sparsh Sharma:
+>>>>>> Dear Professor,
+>>>>>>
+>>>>>> Following up with our last meeting, I have tried the concept of 
+>>>>>> distributing the vortices normally into the XY plane and then 
+>>>>>> convecting the observation point across the domain.
+>>>>>>
+>>>>>> Attached is the plot file which shows
+>>>>>> 1) distribution of vortices
+>>>>>> 2) histogram showing the distribution
+>>>>>> 3) induced velocity with respect to time on the observation point
+>>>>>> 4) FFT of the plot (3)
+>>>>>> 5) PSD of the plot (3)
+>>>>>>
+>>>>>> Details of the numerical experiment:
+>>>>>>
+>>>>>> Observation point travels uniformly from (0,0) to (50,0)
+>>>>>> Number of vortices: 500
+>>>>>> Injection plane: X=0
+>>>>>> Distribution = Normal at the injection plane
+>>>>>> Type of vortex = Gaussian shape waveform
+>>>>>>
+>>>>>> The radii (size) of the vortices are kept constant for this test.
+>>>>>>
+>>>>>> Next steps:
+>>>>>>
+>>>>>> 1) increasing the size of the domain (horizontally)
+>>>>>> 2) varying the size of the vortex
+>>>>>> 3) formulate the objective function
+>>>>>>
+>>>>>> Thanks and best regards,
+>>>>>>
+>>>>>> Sparsh
+>>>>>
+>>>>> -- 
+>>>>> -- 
+>>>>> Prof. Dr.-Ing. Ennes Sarradj
+>>>>> Technische Universität Berlin
+>>>>> Fachgebiet Technische Akustik
+>>>>> Sekr. TA7
+>>>>> Einsteinufer 25
+>>>>> 10587 Berlin
+>>>>> Tel. +49 30 314 25928
+>>>>
+>>>>
+>> -- 
+>> -- 
+>> Prof. Dr.-Ing. Ennes Sarradj
+>> Technische Universität Berlin
+>> Fachgebiet Technische Akustik
+>> Sekr. TA7
+>> Einsteinufer 25
+>> 10587 Berlin
+>> Tel. +49 30 314 25928
+>
+>
+>
+> Sparsh Sharma
+>
+-- 
+--
+Prof. Dr.-Ing. Ennes Sarradj
+Technische Universität Berlin
+Fachgebiet Technische Akustik
+Sekr. TA7
+Einsteinufer 25
+10587 Berlin
+Tel. +49 30 314 25928
+
