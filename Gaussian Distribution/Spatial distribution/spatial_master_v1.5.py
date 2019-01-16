@@ -1,32 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jan 16 10:14:07 2019
-
-@author: WS1
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jan 16 08:26:17 2019
-
-@author: WS1
-
-independent of the main code
-addition of the variable
-** core radius (size of the vortex)
-** gamma (strength of the vortex)
-"""
-
 import numpy as np
-#from pysces import *
-#import numpy as np
 import matplotlib.pyplot as plt
-#from pylab import *
 import scipy.fftpack
-#import random
 import time
-#from scipy.stats import norm
 import matplotlib.mlab as mlab
+from matplotlib.mlab import psd
 from matplotlib.lines import Line2D
 
 
@@ -65,10 +42,6 @@ def induced_velocity_single(x, xvort, gam, core_radius):
         vel = gam / (2 * np.pi) * vel / rsq[:,np.newaxis]
         return np.squeeze(vel)
     
-
-#mu, sigma = 0, 0.1 # mean and standard deviation
-#s = np.random.normal(mu, sigma, 100)
-
 total_num = 500
 
 xvort1 = np.zeros((total_num,2))
@@ -82,11 +55,10 @@ q[:,1] = np.random.uniform(-0.5,0.5,total_num)
 
 core_radius = np.zeros((total_num,1))
 core_radius[:,0] = np.random.uniform(0,1,total_num)
-#print core_radius
 
 gam = np.zeros((total_num,1))
 gam[:,0] = np.random.uniform(-1,1,total_num)
-#print gam
+
 sum = np.zeros((total_num,2))
 
 for i in range (0, total_num):
@@ -99,18 +71,6 @@ for i in range (0, total_num):
     # vel1[:,:] = induced_velocity_single(q, xvort1, gam, core_radius)
 #    print vel1
     a = a + 1
-    # print a
-
-#savetxt('core_radius'+'.csv',np.column_stack((core_radius[:,0])), fmt='%5s', delimiter=',')
-
-#print xvort1  
-#print vel1
-#plt.scatter (q[:,0],q[:,1])
-#plt.show()
-
-#plt.hist(q[:,1])
-##plt.hist(q[:,0])
-#plt.show()
 
 t = np.linspace(0,50,total_num)
 vel_tot_mag = np.zeros((total_num,1))
@@ -119,37 +79,6 @@ vel_tot_mag = (sum[:,0]**2 + sum[:,1]**2)**0.5
 
 end = time.time()
 print 'It took just '+ str(end - start) + ' seconds!'
-#fig, ax = plt.subplots()
-#u1 = plt.plot(t, vel1[:,0], c='g', label='u')
-#v1 = plt.plot(t, vel1[:,1], c='r', label='v')
-#vel = plt.plot(t, vel_tot_mag[:], c='k', label='U')
-
-
-#plt.xlabel('time')
-#plt.ylabel('induced_velocity u')
-#plt.legend(loc='upper right')
-##savefig(str(number_of_vortices)+'_vortices_u_velocity_rand_5000.pdf')
-#plt.show()
-
-# Number of samplepoints
-N = total_num
-# sample spacing
-T = 1.0 / (total_num/2)
-x = np.linspace(0.0, N*T, N)
-y = vel_tot_mag
-yf = scipy.fftpack.fft(y)
-xf = np.linspace(0.0, 1.0/(2.0*T), N/2)
-
-fig, ax = plt.subplots()
-ax.plot(xf, 2.0/N * np.abs(yf[:N//2]))
-ax.set_xscale('log')
-plt.xlabel('frequency (Hz)')
-plt.ylabel('induced_velocity')
-#savefig('frequency_(5,1)_rand_5000'+str(N)+str(number_of_vortices)+'.pdf')
-plt.show()
-
-
-#import matplotlib.mlab as mlab
 
 def L_p(x):
 	return 20*np.log10(np.abs(x)/2.e-5)
@@ -157,88 +86,14 @@ def L_p(x):
 blocksize=100
 j=0
 
-(werte1,freq1)=plt.psd(vel_tot_mag[:], NFFT=blocksize, Fs=100, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
-(werte2,freq2)=plt.psd(sum[:,0], NFFT=blocksize, Fs=100, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
-(werte3,freq3)=plt.psd(sum[:,1], NFFT=blocksize, Fs=100, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
-
-
+(werte1,freq1)=psd(vel_tot_mag[:], NFFT=blocksize, Fs=100, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
+(werte2,freq2)=psd(sum[:,0], NFFT=blocksize, Fs=100, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
+(werte3,freq3)=psd(sum[:,1], NFFT=blocksize, Fs=100, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
 
 pegel1=L_p(werte1)
 pegel2=L_p(werte2)
 pegel3=L_p(werte3)
-#freq=freq[xx:]
-#plt.plot()
 
-	
-#Sr=freq*durchmesser/U
-#solldrucklist=[1000,1200,1500,1700]
-#alphalist=[0.25,0.5,0.75,1.0]
-#stylelist=['--','-.',':','-']
-#
-#plt.figure(1,figsize=(8.4/2.54,4.0/2.54))
-#plt.semilogx(freq,pegel,linestyle=stylelist[j],linewidth=0.6,alpha=alphalist[j])
-#j+=1
-#plt.savefig('SPL_10000_windows.pdf')
-
-#plt.show()
-
-#import matplotlib.mlab as mlab
-#
-#def L_p(x):
-#	return 20*np.log10(np.abs(x)/2.e-5)
-#
-#blocksize=100
-#j=0
-#
-#(werte,freq)=plt.psd(sum[:,0], NFFT=blocksize, Fs=100, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
-##xx=30
-#
-#
-#pegel=L_p(werte)
-##freq=freq[xx:]
-#plt.plot()
-#
-#	
-##Sr=freq*durchmesser/U
-##solldrucklist=[1000,1200,1500,1700]
-#alphalist=[0.25,0.5,0.75,1.0]
-#stylelist=['--','-.',':','-']
-#
-#plt.figure(1,figsize=(8.4/2.54,4.0/2.54))
-#plt.semilogx(freq,pegel,linestyle=stylelist[j],linewidth=0.6,alpha=alphalist[j])
-#j+=1
-##plt.savefig('SPL_10000_windows.pdf')
-#
-#plt.show()
-#
-#import matplotlib.mlab as mlab
-#
-#def L_p(x):
-#	return 20*np.log10(np.abs(x)/2.e-5)
-#
-#blocksize=100
-#j=0
-#
-#(werte,freq)=plt.psd(sum[:,1], NFFT=blocksize, Fs=100, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
-##xx=30
-#
-#
-#pegel=L_p(werte)
-##freq=freq[xx:]
-#plt.plot()
-#
-#	
-##Sr=freq*durchmesser/U
-##solldrucklist=[1000,1200,1500,1700]
-#alphalist=[0.25,0.5,0.75,1.0]
-#stylelist=['--','-.',':','-']
-#
-#plt.figure(1,figsize=(8.4/2.54,4.0/2.54))
-#plt.semilogx(freq,pegel,linestyle=stylelist[j],linewidth=0.6,alpha=alphalist[j])
-#j+=1
-##plt.savefig('SPL_10000_windows.pdf')
-#
-#plt.show()
 
 fig = plt.figure(figsize=(8,40))
 col = np.zeros((total_num))
@@ -269,12 +124,6 @@ ax2 = plt.plot(t, sum[:,1], c='r', label='v (y-component of induced velocity)')
 #ax2 = plt.plot(t, vel_tot_mag[:], c='k', label='U (total induced velocity)')
 ax2 = fig.add_subplot(613).legend(loc='best')
 
-ax3 = fig.add_subplot(614)
-ax3 = fig.add_subplot(614).set_ylabel('induced velocity')
-ax3 = fig.add_subplot(614).set_xlabel('Frequency (Hz)')
-ax3 = fig.add_subplot(614).set_title('FFT of induced velocity')
-ax3 = plt.semilogx(xf, 2.0/N * np.abs(yf[:N//2]))
-
 ax4 = fig.add_subplot(615)
 ax4 = fig.add_subplot(615).set_ylabel('Power Spectral Density (dB)')
 ax4 = fig.add_subplot(615).set_xlabel('Frequency (Hz)')
@@ -287,17 +136,6 @@ ax5 = fig.add_subplot(616).set_ylabel('Y')
 ax5 = fig.add_subplot(616).set_title('Histogram for radius size of the vortices injected from X=0')
 ax5 = plt.hist(core_radius[:], orientation='vertical')
 #fig.savefig('spatial_master_v1.2.pdf')
-plt.show()
-
-fig2 = plt.figure(figsize=(8,40))
-ax1 = fig2.add_subplot(311)
-ax1 = fig2.add_subplot(311).set_ylabel('Power Spectral Density (dB)')
-ax1 = fig2.add_subplot(311).set_xlabel('Frequency (Hz)')
-ax1 = fig2.add_subplot(311).set_title('Power Spectral Density (PSD) of induced velocity')
-ax1 = plt.semilogx(freq1,pegel1,c='k', label='U_total')
-ax1 = plt.semilogx(freq2,pegel2,c='g', label='u_x')
-ax1 = plt.semilogx(freq3,pegel3,c='r', label='v_y')
-ax1 = fig2.add_subplot(311).legend(loc='best')
 plt.show()
 
 fig3 = plt.figure(figsize=(15,40))

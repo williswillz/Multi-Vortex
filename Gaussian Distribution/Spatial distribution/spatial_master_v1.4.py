@@ -221,6 +221,6 @@ ax5 = fig.add_subplot(616).set_xlabel('X')
 ax5 = fig.add_subplot(616).set_ylabel('Y')
 ax5 = fig.add_subplot(616).set_title('Histogram for radius size of the vortices injected from X=0')
 ax5 = plt.hist(core_radius[:], orientation='vertical')
-fig.savefig('spatial_master_v1.2.pdf')
+# fig.savefig('spatial_master_v1.2.pdf')
 plt.show()
 

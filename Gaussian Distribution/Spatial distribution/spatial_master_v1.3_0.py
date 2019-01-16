@@ -238,6 +238,9 @@ Z = np.zeros((total_num,2))
 Z[:,0] = np.linspace(x_start, x_end, N)
 Z[:,1] = np.linspace(x_start, x_end, N)
 
+for i in range (0,N*N)
+    
+
 for i in range (0, total_num):
     i = i * 0.1
     # xvort1[a,0] = i
