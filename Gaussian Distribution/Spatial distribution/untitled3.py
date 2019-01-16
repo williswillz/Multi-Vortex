@@ -19,6 +19,7 @@ import matplotlib.mlab as mlab
 #s = np.random.normal(mu, sigma, 100)
 
 total_num = 500
+
 panels = Vortices()
 panels.core_radius = 0.01
 
@@ -32,8 +33,8 @@ q[:,0] = np.random.uniform(0,50,total_num)
 q[:,1] = np.random.normal(0,1,total_num)
 a = 0
 
-for i in range (0, 500):
-    i = i * 0.1
+for i in range (0, total_num):
+    i = i * 0.01
 #    q[a,0] = np.random.uniform(0,50,1)
 #    q[a,1] = np.random.normal(0,1,1)
 #    q[a,1] = np.random.rayleigh(0,1)
@@ -44,7 +45,7 @@ for i in range (0, 500):
 
 #print xvort1  
 #print vel1
-#print q
+print q
 #
 #plt.scatter (q[:,0],q[:,1])
 #plt.show()

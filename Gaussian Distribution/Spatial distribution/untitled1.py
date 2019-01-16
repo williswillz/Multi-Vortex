@@ -3,6 +3,7 @@
 Created on Mon Jan 14 15:17:27 2019
 
 @author: WS1
+**using pysces
 """
 
 from pysces import *
