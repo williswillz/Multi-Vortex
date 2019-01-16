@@ -3,7 +3,6 @@
 Created on Mon Jan 14 15:17:27 2019
 
 @author: WS1
-**using pysces
 """
 
 from pysces import *
@@ -20,6 +19,7 @@ import matplotlib.mlab as mlab
 #s = np.random.normal(mu, sigma, 100)
 
 total_num = 500
+
 panels = Vortices()
 panels.core_radius = 0.01
 
@@ -29,11 +29,14 @@ vel1 = np.zeros((total_num,2))
 
 q = np.zeros((total_num,2))
 a = 0
+q[:,0] = np.random.uniform(0,50,total_num)
+q[:,1] = np.random.normal(0,1,total_num)
+a = 0
 
 for i in range (0, total_num):
-    i = i * 0.1
-    q[a,0] = np.random.uniform(0,50,1)
-    q[a,1] = np.random.normal(0,1,1)
+    i = i * 0.01
+#    q[a,0] = np.random.uniform(0,50,1)
+#    q[a,1] = np.random.normal(0,1,1)
 #    q[a,1] = np.random.rayleigh(0,1)
     xvort1[a,0] = i
     xvort1[a,1] = 0
@@ -42,7 +45,7 @@ for i in range (0, total_num):
 
 #print xvort1  
 #print vel1
-#print q
+print q
 #
 #plt.scatter (q[:,0],q[:,1])
 #plt.show()
@@ -149,5 +152,5 @@ ax4 = fig.add_subplot(515).set_xlabel('Frequency (Hz)')
 ax4 = fig.add_subplot(515).set_title('Power Spectral Density (PSD) of induced velocity')
 ax4 = plt.semilogx(freq,pegel,linewidth=0.6)
 
-fig.savefig('multipleplots.pdf')
+#fig.savefig('multipleplots.pdf')
 plt.show()
