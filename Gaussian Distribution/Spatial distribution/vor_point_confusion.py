@@ -58,7 +58,7 @@ def induced_velocity_single(x, xvort, gam, core_radius):
         .. math:: u_\theta = \frac{\Gamma r}{2\pi r_0^2}
         """
         r = np.array(x, ndmin=2) - np.array(xvort)
-        rsq = np.maximum(np.sum(r * r, 1), core_radius**2)
+        rsq = np.maximum(np.sum(r * r, 1), (np.array(core_radius**2)))
         # alternative regularization (Krasny, Eldredge)
         # rsq = np.sum(r * r, 1) + core_radius**2
         vel = np.transpose(np.array([-r[:,1], r[:,0]]))
@@ -82,19 +82,20 @@ q[:,1] = np.random.uniform(-0.5,0.5,total_num)
 
 core_radius = np.zeros((total_num,1))
 core_radius[:,0] = np.random.uniform(0,1,total_num)
-#print core_radius
+# print core_radius
 
 gam = np.zeros((total_num,1))
 gam[:,0] = np.random.uniform(-1,1,total_num)
-#print gam
+# print gam[:,0]
 
 for i in range (0, total_num):
     i = i * 0.1
     xvort1[a,0] = i
     xvort1[a,1] = 0
-    vel1[:,:] = induced_velocity_single(q, xvort1, gam, core_radius[a])
+    vel1[:,:] = induced_velocity_single(q, xvort1, gam, core_radius[:,0])
     # vel1[:,:] = induced_velocity_single(q, xvort1, gam, core_radius)
-#    print vel1
+    print vel1
+    print core_radius
     a = a + 1
     print a
 
@@ -149,7 +150,7 @@ plt.show()
 import matplotlib.mlab as mlab
 
 def L_p(x):
-	return 20*np.log10(np.abs(x)/2.e-5)
+    return 20*np.log10(np.abs(x)/2.e-5)
 
 blocksize=100
 j=0
@@ -162,7 +163,7 @@ pegel=L_p(werte)
 #freq=freq[xx:]
 plt.plot()
 
-	
+    
 #Sr=freq*durchmesser/U
 #solldrucklist=[1000,1200,1500,1700]
 alphalist=[0.25,0.5,0.75,1.0]

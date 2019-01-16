@@ -92,11 +92,9 @@ for i in range (0, total_num):
     i = i * 0.1
     xvort1[a,0] = i
     xvort1[a,1] = 0
-    vel1[:,:] = induced_velocity_single(q, xvort1, gam, core_radius[a])
-    # vel1[:,:] = induced_velocity_single(q, xvort1, gam, core_radius)
+    vel1[:,:] = induced_velocity_single(q, xvort1, gam[a], core_radius[a])
 #    print vel1
     a = a + 1
-    print a
 
 #savetxt('core_radius'+'.csv',np.column_stack((core_radius[:,0])), fmt='%5s', delimiter=',')
 
@@ -222,5 +220,4 @@ ax5 = fig.add_subplot(616).set_ylabel('Y')
 ax5 = fig.add_subplot(616).set_title('Histogram for radius size of the vortices injected from X=0')
 ax5 = plt.hist(core_radius[:], orientation='vertical')
 fig.savefig('spatial_master_v1.2.pdf')
-plt.show()
-
+plt.show()    
