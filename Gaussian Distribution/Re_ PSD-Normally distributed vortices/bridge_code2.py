@@ -1,19 +1,62 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jan 22 11:08:54 2019
 
-# coding: utf-8
-
-# In[1]:
-
-
-# get_ipython().run_line_magic('matplotlib', 'notebook')
+@author: WS1
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.mlab import psd
 
+def naca_airfoil(code, num_points, zero_thick_te=False, uniform=False):
+    """Return a NACA 4-digit series airfoil"""
+    # extract parameters from 4-digit code
+    code_str = "%04d" % int(code)
+    if len(code_str) != 4:
+        raise ValueError("NACA designation is more than 4 digits")
+    max_camber = 0.01 * int(code_str[0])
+    p = 0.1 * int(code_str[1])  # location of max camber
+    thickness = 0.01 * int(code_str[2:])
+    if uniform:
+        x = np.linspace(0, 1, num_points)
+    else:
+        # closer spacing near leading edge
+        theta = np.linspace(0, 0.5 * np.pi, num_points)
+        x = 1 - np.cos(theta)
 
-# ## define parameters
+    # thickness
+    coefs = [-0.1015, 0.2843, -0.3516, -0.1260, 0, 0.2969]
+    if zero_thick_te:
+        coefs[0] = -0.1036
+    y_thick = 5 * thickness * (np.polyval(coefs[:5], x) +
+                               coefs[5] * np.sqrt(x))
 
-# In[27]:
+    # camber
+    front = np.where(x <= p)
+    back = np.where(x > p)
+    y_camber = np.zeros_like(x)
+    if p:
+        y_camber[front] = max_camber * x[front] / p**2 * (2 * p - x[front])
+        y_camber[back] = max_camber * ((1. - x[back])/(1. - p)**2 *
+                                       (1 + x[back] - 2 * p))
+    x = np.hstack([x[-1:0:-1], x])
+    y = np.hstack([y_camber[-1:0:-1] + y_thick[-1:0:-1],
+                   y_camber - y_thick])
+    return (np.array([x, y]).T)
 
+q = naca_airfoil(0012, 1001)
+#print q
+
+q_mid = (q[1:] + q[:-1])/2
+#print q_mid
+
+obsx = q_mid[:,0]
+obsy = q_mid[:,1]
+#print obsx
+#print obsy
+obsX = np.vstack((obsx,obsy))
+#print obsX
+print len(obsx)
 
 length = 10. #nondimensional length of window
 height = 5 #window height
@@ -25,11 +68,12 @@ t1 = 1.#end time
 ts = 0.001 # time step
 v0 = 5 #convection speed
 
+'''
+for i in range (0,)
+'''
 
 # ## set random distribution for vortex location, size and strength
 # origin at window center
-
-# In[28]:
 
 
 vortx = np.random.uniform(low=-length/2,high=length/2,size=N)
@@ -39,24 +83,7 @@ gamma = np.random.normal(scale=gammas,size=N)
 rho = np.random.rayleigh(scale=rscale,size=N)
 
 
-# ## set relative locations for observation
-# vortex window moves to the right
-# t=0 means observation in the center of the window
-
-# In[29]:
-
-
 t = np.arange(t0,t1,ts)
-obsx = -v0*t
-print obsx
-obsy = np.zeros_like(obsx)
-obsX = np.vstack((obsx,obsy))
-
-
-# vortex induced velocity is the minimum of $u_\theta = \frac{\Gamma}{2 \pi r}$ and $u_\theta = \frac{\Gamma r}{2\pi r_0^2}$
-
-# In[34]:
-
 
 dist = obsX[:,:,np.newaxis]-vortX[:,np.newaxis,:] # dim 2 x timesteps x N
 r = np.sqrt((dist*dist).sum(0)) # dim timesteps x N
@@ -70,12 +97,9 @@ uind[0] *= -1 # change sign for ux (to get correct rotation)
 # sum over vortices
 utot = uind.sum(2) # dim 2 x timesteps
 
-
-# ## plot time histories and psd for induced velocity
-
-# In[35]:
-
-
+utang_x = np.sum(utot[0])
+print utang_x
+print np.sum(utot[1])
 plt.figure(2)
 plt.subplot(1,2,1)
 plt.plot(t,utot[0],label='u')

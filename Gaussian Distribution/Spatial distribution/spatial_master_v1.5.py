@@ -121,7 +121,7 @@ ax2 = fig.add_subplot(613).set_ylabel('induced velocity')
 ax2 = fig.add_subplot(613).set_title('induced velocity with respect to time')
 ax2 = plt.plot(t, sum[:,0], c='g', label='u (x-component of induced velocity)')
 ax2 = plt.plot(t, sum[:,1], c='r', label='v (y-component of induced velocity)')
-#ax2 = plt.plot(t, vel_tot_mag[:], c='k', label='U (total induced velocity)')
+ax2 = plt.plot(t, vel_tot_mag[:], c='k', label='U (total induced velocity)')
 ax2 = fig.add_subplot(613).legend(loc='best')
 
 ax4 = fig.add_subplot(615)
@@ -158,7 +158,7 @@ ax2 = fig3.add_subplot(312).set_ylabel('induced velocity')
 ax2 = fig3.add_subplot(312).set_title('induced velocity with respect to time')
 ax2 = plt.plot(t, sum[:,0], c='g', label='u (x-component of induced velocity)')
 ax2 = plt.plot(t, sum[:,1], c='r', label='v (y-component of induced velocity)')
-#ax2 = plt.plot(t, vel_tot_mag[:], c='k', label='U (total induced velocity)')
+ax2 = plt.plot(t, vel_tot_mag[:], c='k', label='U (total induced velocity)')
 ax2 = fig3.add_subplot(312).legend(loc='best')
 
 

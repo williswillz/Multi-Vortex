@@ -399,7 +399,7 @@ vel_tot_mag_reg1 = np.zeros((5000,1))
 vel_tot_mag_reg1 = (vel_tot_reg1[:,0]**2 + vel_tot_reg1[:,1]**2)**0.5
 vel_tot_mag_reg2 = np.zeros((5000,1))
 vel_tot_mag_reg2 = (vel_tot_reg2[:,0]**2 + vel_tot_reg2[:,1]**2)**0.5
-vel_tot_mag = vel_tot_mag_reg1 + vel_tot_mag_reg2
+vel_tot_mag = vel_tot_mag_reg1 + vel_tot_mag_reg2 
 print vel_tot_mag_reg1
 print vel_tot_mag_reg2
 
