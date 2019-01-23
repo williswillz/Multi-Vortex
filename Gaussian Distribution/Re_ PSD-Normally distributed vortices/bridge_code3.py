@@ -114,9 +114,9 @@ uind[0] *= -1 # change sign for ux (to get correct rotation)
 utot = uind.sum(2) # dim 2 x timesteps
 utot *= np.cos(slope)
 
-utang_x = np.sum(utot[0])
-print utang_x
-print np.sum(utot[1])
+#utang_x = np.sum(utot[0])
+#print utang_x
+#print np.sum(utot[1])
 
 plt.figure(2)
 plt.subplot(1,2,1)
