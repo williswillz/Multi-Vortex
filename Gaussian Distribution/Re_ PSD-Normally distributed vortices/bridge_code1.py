@@ -42,7 +42,7 @@ def naca_airfoil(code, num_points, zero_thick_te=False, uniform=False):
 
 
 angle = 0
-q = naca_airfoil("0012", 5, zero_thick_te=True)  			#airfoil input
+q = naca_airfoil("0012", 3, zero_thick_te=True)  			#airfoil input
 qx = q[:,0]
 qy = q[:,1]
 q_mid = (q[1:] + q[:-1])/2									#collacation points or mid-point on the panels
@@ -67,20 +67,33 @@ length = np.sqrt((qx[1:] - qx[:-1])**2 + (qy[1:] - qy[:-1])**2)
 #    if q[i+1,0] - q[i,0] <=0:
 #        beta = np.arccos((q[0,i+1] - q[0,i]) / length[i])
 
-print length 
+#print length 
 
 
 beta = q[1:] - q[:-1]
-print beta
+#print beta
 #print beta[:,1]
 slope = np.arctan(beta[:,1] / beta[:,0])
-print slope    
+#print slope    
 
 if np.any(beta[:,0] <= 0):
     slope = np.arctan(beta[:,1] / beta[:,0])
 elif np.any(beta[:,0] > 0):
     slope = np.pi + np.arctan(beta[:,1] / beta[:,0])
-print slope
+#print slope
+
+dq = np.diff(q, axis=0)
+print dq, "dq"
+numpanels = dq.shape[0]
+lengths = np.linalg.norm(dq, axis=1) 
+print dq[:,1]
+normals = np.transpose(np.array([dq[:,1], -dq[:,0]]) / lengths)
+tangents = -np.transpose(np.array([dq[:,0], dq[:,1]]) / lengths) 
+#print dq
+#print numpanels
+#print lengths
+#print normals
+#print tangents
 
 #print qx[1:] - qx[:-1]
 

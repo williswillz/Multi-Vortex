@@ -54,6 +54,7 @@ def naca_airfoil(code, num_points, zero_thick_te=False, uniform=False):
 q = naca_airfoil(0012, 1001)
 #print q
 
+        
 q_mid = (q[1:] + q[:-1])/2
 #print q_mid
 
@@ -63,7 +64,7 @@ obsy = q_mid[:,1]
 #print obsy
 obsX = np.vstack((obsx,obsy))
 #print obsX
-print len(obsx)
+#print len(obsx)
 
 beta = q[1:] - q[:-1]  
 
@@ -71,7 +72,13 @@ if np.any(beta[:,0] <= 0):
     slope = np.arctan(beta[:,1] / beta[:,0])
 elif np.any(beta[:,0] > 0):
     slope = np.pi + np.arctan(beta[:,1] / beta[:,0])
-print slope
+#print slope
+
+dq = np.diff(q, axis=0)
+numpanels = dq.shape[0]
+lengths = np.linalg.norm(dq, axis=1) 
+normals = np.transpose(np.array([dq[:,1], -dq[:,0]]) / lengths)
+tangents = -np.transpose(np.array([dq[:,0], dq[:,1]]) / lengths) 
 
 
 length = 10. #nondimensional length of window
@@ -108,24 +115,28 @@ utheta = (0.5/np.pi)*gamma*np.minimum(1/r,r/rho) # dim timesteps x N
 # utheta = (0.5/np.pi)*gamma/r 
 # utheta = gamma*rho**(1.5)*np.exp(-9*rho*rho*r*r)
 # into cartesian coords
-uind = utheta * dist[::-1]   # dim 2 x timesteps x N
+uind = utheta * dist[::-1]  # dim 2 x timesteps x N
 uind[0] *= -1 # change sign for ux (to get correct rotation)
 # sum over vortices
 utot = uind.sum(2) # dim 2 x timesteps
-utot *= np.cos(slope)
+utot_tangent = utot.T * tangents
 
-#utang_x = np.sum(utot[0])
-#print utang_x
-#print np.sum(utot[1])
-
+print utot_tangent[:,0].sum()
+print utot_tangent[:,1].sum()
+#print utot
+#print utot.T
+#print tangents
+#print  utot.T * tangents
+#print utot_tangent
+#print utot_tangent[:,0]
 plt.figure(2)
 plt.subplot(1,2,1)
-plt.plot(t,utot[0],label='u')
-plt.plot(t,utot[1],label='v')
+plt.plot(t,utot_tangent[:,0],label='u')
+plt.plot(t,utot_tangent[:,1],label='v')
 plt.legend()
 plt.subplot(1,2,2)
-(valu,freq) = psd(utot[0],Fs=1/ts,detrend='mean')
-(valv,freq) = psd(utot[1],Fs=1/ts,detrend='mean')
+(valu,freq) = psd(utot_tangent[:,0],Fs=1/ts,detrend='mean')
+(valv,freq) = psd(utot_tangent[:,1],Fs=1/ts,detrend='mean')
 plt.loglog(freq[1:],valu[1:],label='u')
 plt.loglog(freq[1:],valv[1:],label='v')
 plt.loglog(freq[1:],valu[1:]+valv[1:],label='tot')
