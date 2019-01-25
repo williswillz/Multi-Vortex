@@ -1,0 +1,17 @@
+Metadata-Version: 1.0
+Name: turbulence
+Version: 0.0
+Summary: A collection of classes and functions to deal with turbulence in atmospheric sound propagation.
+Home-page: UNKNOWN
+Author: Frederik Rietdijk
+Author-email: fridh@fridh.nl
+License: LICENSE
+Description: # Turbulence
+        
+        A collection of classes and functions to deal with turbulence in atmospheric sound propagation.
+        
+        ## License
+        
+        BSD 2-clause, see LICENSE.
+        
+Platform: UNKNOWN
