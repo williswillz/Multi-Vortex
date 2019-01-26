@@ -149,7 +149,7 @@ class Spectrum(object):
         #return getattr(self, 'spectral_density_function_'+self.ndim+'d')(self.mu_0, self.a, self.wavenumber)   
 
 
-@six.add_metaclass(abc.ABCMeta)
+
 class Spectrum1D(Spectrum):
     """
     Abstract class for one-dimensional turbulence spectra.
