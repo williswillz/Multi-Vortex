@@ -1251,6 +1251,5 @@ def test_some():
     
     field_g.generate()
     field_vk.generate()
-    plt.show()
 
     
