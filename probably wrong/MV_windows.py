@@ -21,8 +21,8 @@ Vortices.core_radius = 0.005
 #free vortices
 
 #v1	=	(	1.724339281	,	3.1	)
-v1 = (5.0,-0.1)
-v2 = (5.0,0.1)
+v1 = (-5.0,-0.1)
+v2 = (-5.0,0.1)
 #s1	=	-0.00810137
 s1 = 0.24
 s2 = 0.24
@@ -30,6 +30,7 @@ s2 = 0.24
 vort = Vortices([v1,v2],[s1,s2])
 
 flow = ExplicitEuler(dt, Uinfty, bound, wake=vort, need_force='wake_impulse')
+#flow = ExplicitEuler(dt, Uinfty, bound, need_force='wake_impulse')
 
 for i in range(1,num_steps):
     flow.advance()
@@ -43,7 +44,7 @@ steps2 = np.array([0, num_steps*dt])
 
 #saving data
 data = (steps, 2*f[:,0])  
-savetxt('single-vortex_'+str(v1)+str(v2)+str(num_steps)+str(Uinfty)+str(dt)+str(s1)+str(s2)+'_'+'.csv',np.column_stack((steps, 2*f[:,1])), fmt='%5s', delimiter=',')
+#savetxt('single-vortex_'+str(v1)+str(v2)+str(num_steps)+str(Uinfty)+str(dt)+str(s1)+str(s2)+'_'+'.csv',np.column_stack((steps, 2*f[:,1])), fmt='%5s', delimiter=',')
 end = time.time()
 print end - start
 
@@ -55,7 +56,7 @@ ax1.plot(steps2, expected, c='g', label='expected Cl')
 plt.legend();
 plt.xlabel('time')
 #plt.grid(True)
-plt.savefig('cl_cd_'+str(v1)+str(v2)+str(num_steps)+str(Uinfty)+str(dt)+str(s1)+str(s2)+'.pdf')
+#plt.savefig('cl_cd_'+str(v1)+str(v2)+str(num_steps)+str(Uinfty)+str(dt)+str(s1)+str(s2)+'.pdf')
 plt.show()
 
 average_thrust = np.average(flow.force[:,0])
@@ -98,5 +99,5 @@ stylelist=['--','-.',':','-']
 plt.figure(1,figsize=(8.4/2.54,4.0/2.54))
 plt.semilogx(freq,pegel,linestyle=stylelist[j],linewidth=0.6,alpha=alphalist[j])
 j+=1
-plt.savefig('SPL_single-vortex_'+str(v1)+str(v2)+str(num_steps)+str(Uinfty)+str(dt)+str(s1)+str(s2)+'.pdf')
+#plt.savefig('SPL_single-vortex_'+str(v1)+str(v2)+str(num_steps)+str(Uinfty)+str(dt)+str(s1)+str(s2)+'.pdf')
 plt.show()

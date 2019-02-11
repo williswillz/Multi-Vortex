@@ -1,16 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jan 23 15:13:10 2019
-
-@author: WS1
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jan 22 11:08:54 2019
-
-@author: WS1
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.mlab import psd
