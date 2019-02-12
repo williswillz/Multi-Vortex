@@ -104,6 +104,9 @@ t1 = 10.#end time
 ts = 0.01 # time step
 
 #for i in range(len(t)):
+
+A = []
+B = []
 for i in range(len(t)):
 #    print i
     print "this is the iteration {} / {}".format(i, len(t))
@@ -114,7 +117,7 @@ for i in range(len(t)):
 #    print len(obsx)
     obsy = q_mid[:,1]
     obsX = np.vstack((obsx,obsy))
-    print obsX
+#    print obsX
     dist = obsX[:,:,np.newaxis]-vortX[:,np.newaxis,:] # dim 2 x timesteps x N
     r = np.sqrt((dist*dist).sum(0)) # dim timesteps x N
 #    print r
@@ -123,6 +126,7 @@ for i in range(len(t)):
     uind = utheta * dist[::-1] # dim 2 x timesteps x N
     uind[0] *= -1 # change sign for ux (to get correct rotation)
     utot = uind.sum(2) # dim 2 x timesteps
+#    print utot
     q_newx = q[:,0] + (length/2)
     q_newx = q_newx - i
     q_newy = q[:,1]
@@ -133,14 +137,15 @@ for i in range(len(t)):
     normals = np.transpose(np.array([dq[:,1], -dq[:,0]]) / lengths)
     tangents = -np.transpose(np.array([dq[:,0], dq[:,1]]) / lengths)
     utot_tangent = utot.T * tangents
-#    print utot_tangent
-    print utot_tangent[:,0].sum()
-    print utot_tangent[:,1].sum()
+    A.append(utot_tangent[:,0].sum())
+    B.append(utot_tangent[:,1].sum())
 
 plt.figure(2)
 plt.subplot(1,2,1)
-plt.plot(t,utot_tangent[:,0],label='u')
-plt.plot(t,utot_tangent[:,1],label='v')
+#plt.plot(t,utot_tangent[:,0],label='u')
+#plt.plot(t,utot_tangent[:,1],label='v')
+plt.plot(t,A,label='u')
+plt.plot(t,B,label='v')
 plt.legend()
 plt.subplot(1,2,2)
 (valu,freq) = psd(utot[0],Fs=1/ts,detrend='mean')
@@ -150,7 +155,33 @@ plt.loglog(freq[1:],valv[1:],label='v')
 plt.loglog(freq[1:],valu[1:]+valv[1:],label='tot')
 plt.legend()
 plt.show
-
+#
+#utot_tangent 
+#cp = 1 - ()
+#def compute_force_pressure(bound_old, wake_old, bound_new, wake_new, pref=0, Uinfty=(1,0)): 
+#    """Finds the forces on the body by integrating the pressure (from unsteady Bernoulli equation)"""
+#    #q is the local velocity at collocation point 
+#    vel = _compute_velocity(bound_new, Uinfty, wake_new)
+#    q = np.linalg.norm(vel, axis=1)
+#    #vref is the kinematic velocity
+#    vref = _compute_kin_velocity(bound_new, Uinfty)
+#    if bound_old and wake_old:
+#        dPhi = _vortex_potential(bound_new, wake_new) - _vortex_potential(bound_old, wake_old) 
+#        dPhi = np.sum(dPhi)
+#    else:
+#        dPhi = 0 
+#    p = -(q**2)/2 + (vref**2)/2 - dPhi + pref
+#    Cp = 1 - ((2*q)**2) #factor of two due to singularity in velocity caluclation
+#    #note: look at Saffman ch. 2 for better calculation of velocity at surface?
+#    f = p * bound_new.lengths 
+#    motion = bound_new._body.get_motion()    
+#    if motion:
+#        norm_inertial = motion.map_vector(bound_new.normals)
+#    else:
+#        norm_inertial = bound_new.normals
+#    f = f[:,np.newaxis] * norm_inertial
+#    force = -np.sum(f, axis=0)
+#    return force, Cp 
 '''
 obsx = q_mid[:,0]
 obsy = q_mid[:,1]

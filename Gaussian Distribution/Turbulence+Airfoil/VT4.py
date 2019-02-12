@@ -83,7 +83,7 @@ uind = utheta * dist[::-1] # dim 2 x timesteps x N
 uind[0] *= -1 # change sign for ux (to get correct rotation)
 # sum over vortices
 utot = uind.sum(2) # dim 2 x timesteps
-
+print utot
 
 # ## plot time histories and psd for induced velocity
 
@@ -117,7 +117,7 @@ uuopt,ttopt = opti
 plt.loglog(freq[1:],E11(freq[1:],uuopt,ttopt),label='E11')
 plt.loglog(freq[1:],E22(freq[1:],uuopt,ttopt),label='E22')
 plt.legend()
-plt.savefig('spectra.pdf')
+#plt.savefig('spectra.pdf')
 #plt.show()
 
 opti
