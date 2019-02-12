@@ -67,7 +67,7 @@ q_mid = (q[1:] + q[:-1])/2
 
 length = 100. #nondimensional length of window
 height = 0.2 #window height
-N = 1000 #number of vortices
+N = 10000 #number of vortices
 gammas = 1. #vortex strength RMS (normal distribution)
 rscale = 0.1 #vortex size scale (rayleigh distribution parameter)
 t0 = -10.#start time for observation of convection
@@ -140,12 +140,18 @@ for i in range(len(t)):
     A.append(utot_tangent[:,0].sum())
     B.append(utot_tangent[:,1].sum())
 
+A = np.array(A)
+B = np.array(B)
+C = np.array((A**2 + B**2)**0.5)
+print C
+
 plt.figure(2)
 plt.subplot(1,2,1)
 #plt.plot(t,utot_tangent[:,0],label='u')
 #plt.plot(t,utot_tangent[:,1],label='v')
 plt.plot(t,A,label='u')
 plt.plot(t,B,label='v')
+#plt.plot(t,C,label='V')
 plt.legend()
 plt.subplot(1,2,2)
 (valu,freq) = psd(utot[0],Fs=1/ts,detrend='mean')
@@ -156,33 +162,52 @@ plt.loglog(freq[1:],valu[1:]+valv[1:],label='tot')
 plt.legend()
 plt.show
 #
-#utot_tangent 
-#cp = 1 - ()
-#def compute_force_pressure(bound_old, wake_old, bound_new, wake_new, pref=0, Uinfty=(1,0)): 
-#    """Finds the forces on the body by integrating the pressure (from unsteady Bernoulli equation)"""
-#    #q is the local velocity at collocation point 
-#    vel = _compute_velocity(bound_new, Uinfty, wake_new)
-#    q = np.linalg.norm(vel, axis=1)
-#    #vref is the kinematic velocity
-#    vref = _compute_kin_velocity(bound_new, Uinfty)
-#    if bound_old and wake_old:
-#        dPhi = _vortex_potential(bound_new, wake_new) - _vortex_potential(bound_old, wake_old) 
-#        dPhi = np.sum(dPhi)
-#    else:
-#        dPhi = 0 
-#    p = -(q**2)/2 + (vref**2)/2 - dPhi + pref
-#    Cp = 1 - ((2*q)**2) #factor of two due to singularity in velocity caluclation
-#    #note: look at Saffman ch. 2 for better calculation of velocity at surface?
-#    f = p * bound_new.lengths 
-#    motion = bound_new._body.get_motion()    
-#    if motion:
-#        norm_inertial = motion.map_vector(bound_new.normals)
-#    else:
-#        norm_inertial = bound_new.normals
-#    f = f[:,np.newaxis] * norm_inertial
-#    force = -np.sum(f, axis=0)
-#    return force, Cp 
+pref = 100000 #Pa
+p = -(C**2)/2 + (v0**2)/2 + pref
+
+
+def Curles_loadingNoise(y_int,c_sound,r_dist,L,dt,Velo):
+	p_acoustic = ((y_int*L)/(4*np.pi*dt*c_sound*(r_dist**2)))*(0.5*1.225*pow(Velo,2))
+	return p_acoustic
+
+noise = Curles_loadingNoise(10,343,10,p,ts,v0)
+
+plt.figure()
+(valu,freq) = psd(noise,Fs=1/ts,detrend='mean')
+plt.semilogx(freq,valu,label='SPL')
+plt.title('PSD: power spectral density')
+plt.xlabel('Frequency')
+plt.ylabel('Po')
+plt.tight_layout()
+plt.legend()
+plt.show
+
 '''
+def compute_force_pressure(bound_old, wake_old, bound_new, wake_new, pref=0, Uinfty=(1,0)): 
+    """Finds the forces on the body by integrating the pressure (from unsteady Bernoulli equation)"""
+    #q is the local velocity at collocation point 
+    vel = _compute_velocity(bound_new, Uinfty, wake_new)
+    q = np.linalg.norm(vel, axis=1)
+    #vref is the kinematic velocity
+    vref = _compute_kin_velocity(bound_new, Uinfty)
+    if bound_old and wake_old:
+        dPhi = _vortex_potential(bound_new, wake_new) - _vortex_potential(bound_old, wake_old) 
+        dPhi = np.sum(dPhi)
+    else:
+        dPhi = 0 
+    p = -(q**2)/2 + (vref**2)/2 - dPhi + pref
+    Cp = 1 - ((2*q)**2) #factor of two due to singularity in velocity caluclation
+    #note: look at Saffman ch. 2 for better calculation of velocity at surface?
+    f = p * bound_new.lengths 
+    motion = bound_new._body.get_motion()    
+    if motion:
+        norm_inertial = motion.map_vector(bound_new.normals)
+    else:
+        norm_inertial = bound_new.normals
+    f = f[:,np.newaxis] * norm_inertial
+    force = -np.sum(f, axis=0)
+    return force, Cp 
+
 obsx = q_mid[:,0]
 obsy = q_mid[:,1]
 #print obsx
