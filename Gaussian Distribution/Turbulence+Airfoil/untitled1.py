@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Feb 12 13:43:35 2019
+
+@author: WS1
+"""
+
 
 # coding: utf-8
 
@@ -10,13 +17,13 @@ from matplotlib.mlab import psd
 
 
 
-length = 100. #nondimensional length of window
+length = 10. #nondimensional length of window
 height = 0.2 #window height
-N = 10000 #number of vortices
+N = 1000 #number of vortices
 gammas = 1. #vortex strength RMS (normal distribution)
 rscale = 0.1 #vortex size scale (rayleigh distribution parameter)
-t0 = -10.#start time for observation of convection
-t1 = 10.#end time
+t0 = -1.#start time for observation of convection
+t1 = 1.#end time
 ts = 0.001 # time step
 v0 = 5 #convection speed
 
@@ -41,7 +48,8 @@ rho = np.random.rayleigh(scale=rscale,size=N)
 
 t = np.arange(t0,t1,ts)
 obsx = -v0*t
-print len(obsx)
+print len(t)
+#print obsx
 obsy = np.zeros_like(obsx)
 obsX = np.vstack((obsx,obsy))
 

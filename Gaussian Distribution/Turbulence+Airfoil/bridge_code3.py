@@ -68,14 +68,14 @@ normals = np.transpose(np.array([dq[:,1], -dq[:,0]]) / lengths)
 tangents = -np.transpose(np.array([dq[:,0], dq[:,1]]) / lengths) 
 
 
-length = 10. #nondimensional length of window
+length = 100. #nondimensional length of window
 height = 5 #window height
-N = 400 #number of vortices
+N = 10000 #number of vortices
 gammas = 1. #vortex strength RMS (normal distribution)
 rscale = 0.1 #vortex size scale (rayleigh distribution parameter)
-t0 = -1.#start time for observation of convection
-t1 = 1.#end time
-ts = 0.001 # time step
+t0 = -10.#start time for observation of convection
+t1 = 10.#end time
+ts = 0.01 # time step
 v0 = 5 #convection speed
 
 '''
@@ -97,7 +97,7 @@ t = np.arange(t0,t1,ts)
 
 dist = obsX[:,:,np.newaxis]-vortX[:,np.newaxis,:] # dim 2 x timesteps x N
 r = np.sqrt((dist*dist).sum(0)) # dim timesteps x N
-utheta = (0.5/np.pi)*gamma*np.minimum(1/r,r/rho) # dim timesteps x N
+utheta = 16 * gamma * (rho**(-3)) * np.exp(-8*(rho**(-4)) * r**2) * (3-(16 * (rho**(-4)) * r**2)) * r   # Mexican-hat shape
 # comment out one of the two following lines to get alternative vortex models:
 # utheta = (0.5/np.pi)*gamma/r 
 # utheta = gamma*rho**(1.5)*np.exp(-9*rho*rho*r*r)
@@ -120,6 +120,7 @@ plt.figure(2)
 plt.subplot(1,2,1)
 plt.plot(t,utot_tangent[:,0],label='u')
 plt.plot(t,utot_tangent[:,1],label='v')
+plt.plot(t,utot_tangent[:],label='tot')
 plt.legend()
 plt.subplot(1,2,2)
 (valu,freq) = psd(utot_tangent[:,0],Fs=1/ts,detrend='mean')
