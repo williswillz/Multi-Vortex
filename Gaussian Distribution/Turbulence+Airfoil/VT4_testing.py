@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Feb 12 13:43:35 2019
+Created on Tue Feb 12 22:43:59 2019
 
 @author: WS1
 """
@@ -19,13 +19,14 @@ from matplotlib.mlab import psd
 
 length = 10. #nondimensional length of window
 height = 0.2 #window height
-N = 10000 #number of vortices
+v0 = 2.5 #convection speed
+N = 1000 #number of vortices
 gammas = 1. #vortex strength RMS (normal distribution)
 rscale = 0.1 #vortex size scale (rayleigh distribution parameter)
-t0 = -1.#start time for observation of convection
-t1 = 1.#end time
-ts = 0.0001 # time step
-v0 = 5 #convection speed
+t0 = -(length / v0 / 2)  #start time for observation of convection
+t1 = (length / v0 / 2)   #end time
+ts = 0.001 # time step
+
 
 
 # ## set random distribution for vortex location, size and strength
@@ -48,8 +49,7 @@ rho = np.random.rayleigh(scale=rscale,size=N)
 
 t = np.arange(t0,t1,ts)
 obsx = -v0*t
-print len(t)
-#print obsx
+print len(obsx)
 obsy = np.zeros_like(obsx)
 obsX = np.vstack((obsx,obsy))
 
@@ -91,7 +91,7 @@ uind = utheta * dist[::-1] # dim 2 x timesteps x N
 uind[0] *= -1 # change sign for ux (to get correct rotation)
 # sum over vortices
 utot = uind.sum(2) # dim 2 x timesteps
-
+print utot
 
 # ## plot time histories and psd for induced velocity
 
@@ -107,7 +107,7 @@ plt.subplot(1,2,2)
 (valv,freq) = psd(utot[1],Fs=1/ts,detrend='mean')
 plt.loglog(freq[1:],valu[1:],label='u')
 plt.loglog(freq[1:],valv[1:],label='v')
-plt.loglog(freq[1:],valu[1:]+valv[1:],label='tot')
+#plt.loglog(freq[1:],valu[1:]+valv[1:],label='tot')
 plt.legend()
 
 #plt.show()
@@ -125,7 +125,7 @@ uuopt,ttopt = opti
 plt.loglog(freq[1:],E11(freq[1:],uuopt,ttopt),label='E11')
 plt.loglog(freq[1:],E22(freq[1:],uuopt,ttopt),label='E22')
 plt.legend()
-plt.savefig('spectra.pdf')
+#plt.savefig('spectra.pdf')
 #plt.show()
 
 opti

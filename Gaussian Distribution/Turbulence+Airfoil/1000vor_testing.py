@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Wed Feb 13 14:39:50 2019
+
+@author: WS1
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Tue Feb 12 11:19:52 2019
 
 @author: WS1
@@ -51,7 +58,7 @@ def naca_airfoil(code, num_points, zero_thick_te=False, uniform=False):
                    y_camber - y_thick])
     return (np.array([x, y]).T)
 
-q = naca_airfoil(0012, 1001)
+q = naca_airfoil(0012, 101)
 #print q
 #print q[:,0]
 #print q[:,1]
@@ -65,15 +72,15 @@ q_mid = (q[1:] + q[:-1])/2
 #normals = np.transpose(np.array([dq[:,1], -dq[:,0]]) / lengths)
 #tangents = -np.transpose(np.array([dq[:,0], dq[:,1]]) / lengths)
 
-length = 100. #nondimensional length of window
+length = 10. #nondimensional length of window
 height = 0.2 #window height
+v0 = 5 #convection speed
 N = 10000 #number of vortices
 gammas = 1. #vortex strength RMS (normal distribution)
 rscale = 0.1 #vortex size scale (rayleigh distribution parameter)
-t0 = -10.#start time for observation of convection
-t1 = 10.#end time
-ts = 0.01 # time step
-v0 = 5 #convection speed
+t0 = -(length / v0 / 2)  #start time for observation of convection
+t1 = (length / v0 / 2)   #end time
+ts = 0.0001 # time step
 
 
 # ## set random distribution for vortex location, size and strength
@@ -92,12 +99,19 @@ rho = np.random.rayleigh(scale=rscale,size=N)
 # vortex window moves to the right
 # t=0 means observation in the center of the window
 
+
+
 t = np.arange(t0,t1,ts)
+delta = -v0*t
+print len(t)
+#obsy = np.zeros_like(obsx)
+#obsX = np.vstack((obsx,obsy))
 
 #for i in range(len(t)):
 
 A = []
 B = []
+cp = []
 for i in range(len(t)):
 #    print i
     print "this is the iteration {} / {}".format(i, len(t))
@@ -117,62 +131,111 @@ for i in range(len(t)):
     uind = utheta * dist[::-1] # dim 2 x timesteps x N
     uind[0] *= -1 # change sign for ux (to get correct rotation)
     utot = uind.sum(2) # dim 2 x timesteps
-#    print utot
+#    print utot.T
     q_newx = q[:,0] + (length/2)
     q_newx = q_newx - i
+#    print len(q_newx)
     q_newy = q[:,1]
-    q = np.vstack((q_newx, q_newy))
+#    q = np.vstack((q_newx, q_newy))
+    q = np.array([q_newx, q_newy]).T
+#    print q
     dq = np.diff(q, axis=0)
+#    print dq
     numpanels = dq.shape[0]
     lengths = np.linalg.norm(dq, axis=1) 
     normals = np.transpose(np.array([dq[:,1], -dq[:,0]]) / lengths)
+#    print normals[:,0]
     tangents = -np.transpose(np.array([dq[:,0], dq[:,1]]) / lengths)
+#    print tangents
     utot_tangent = utot.T * tangents
-    A.append(utot_tangent[:,0].sum())
-    B.append(utot_tangent[:,1].sum())
-
+#    print utot_tangent
+    utot_tangent_magnitude = pow((pow(utot_tangent[:,0],2) + pow(utot_tangent[:,1],2)), 0.5)
+#    print utot_tangent_magnitude
+    cp = (1 - ((utot_tangent_magnitude**2)/v0**2))
+#    print cp
+    cp = cp * normals[:,1]
+#    print cp
+    cl = cp.sum(0)
+    print cl
+    A.append(cl)
+#    A.append(utot_tangent[:,0].sum())
+#    B.append(utot_tangent[:,1].sum())
+#    pref = 100000 #Pa
+#    p = -(utot_tangent_magnitude**2)/2 + (v0**2)/2 + pref
+#    print p
+#    l = p * normals
+#    print l
+    
 A = np.array(A)
-B = np.array(B)
-C = np.array((A**2 + B**2)**0.5)
-print C
+#B = np.array(B)
+#C = np.array((A**2 + B**2)**0.5)
+#print C
 
-plt.figure(2)
-plt.subplot(1,2,1)
+plt.figure(1)
+#plt.subplot(1,2,1)
 #plt.plot(t,utot_tangent[:,0],label='u')
 #plt.plot(t,utot_tangent[:,1],label='v')
-plt.plot(t,A,label='u')
-plt.plot(t,B,label='v')
+plt.plot(t,A,label='cl')
+#plt.plot(t,B,label='v')
 #plt.plot(t,C,label='V')
 plt.legend()
-plt.subplot(1,2,2)
-(valu,freq) = psd(utot[0],Fs=1/ts,detrend='mean')
-(valv,freq) = psd(utot[1],Fs=1/ts,detrend='mean')
-plt.loglog(freq[1:],valu[1:],label='u')
-plt.loglog(freq[1:],valv[1:],label='v')
-plt.loglog(freq[1:],valu[1:]+valv[1:],label='tot')
-plt.legend()
+#plt.subplot(1,2,2)
+#(valu,freq) = psd(utot[0],Fs=1/ts,detrend='mean')
+#(valv,freq) = psd(utot[1],Fs=1/ts,detrend='mean')
+#plt.loglog(freq[1:],valu[1:],label='u')
+#plt.loglog(freq[1:],valv[1:],label='v')
+#plt.loglog(freq[1:],valu[1:]+valv[1:],label='tot')
+#plt.legend()
 plt.show
 #
 pref = 100000 #Pa
-p = -(C**2)/2 + (v0**2)/2 + pref
-
-
+#p = -(C**2)/2 + (v0**2)/2 + pref
+#print p
 def Curles_loadingNoise(y_int,c_sound,r_dist,L,dt,Velo):
-	p_acoustic = ((y_int*L)/(4*np.pi*dt*c_sound*(r_dist**2)))*(0.5*1.225*pow(Velo,2))
+	p_acoustic = (((y_int*L)/(4*np.pi*dt*c_sound*(r_dist**2)))*(0.5*1.225*pow(Velo,2)))
 	return p_acoustic
 
-noise = Curles_loadingNoise(10,343,10,p,ts,v0)
+noise = Curles_loadingNoise(10,343,10,np.abs(A),ts,v0)
+print noise 
+H = ((noise)/(2.e-5))**2
+print H
+#def L_p(x):
+#	return 20*np.log10(np.abs(x)/2.e-5)
+#spl = L_p(noise)
+#print spl
 
-plt.figure()
+plt.figure(2)
 plt.subplot()
-(valu,freq) = psd(noise,Fs=1/ts,detrend='mean')
-plt.semilogx(freq,valu,label='SPL')
+#(val,freq) = psd(noise,Fs=1/ts,detrend='mean')
+(val, freq) = psd(H, NFFT=512,Fs=1000,detrend='mean')
+#plt.psd(noise,Fs=1/ts,detrend='mean')
+#plt.psd(H, NFFT=512,Fs=1000,detrend='mean')
+plt.semilogx(freq,10*np.log10(val),label='SPL')
+#print freq
+#plt.loglog(freq,val,label='SPL')
 plt.title('PSD: power spectral density')
 plt.xlabel('Frequency')
 plt.ylabel('PSD')
 plt.tight_layout()
 plt.legend()
 plt.show
+
+#def L_p(x):
+#	return 20*np.log10(np.abs(x)/2.e-5)
+#spl = L_p(noise)
+#
+#plt.figure(3)
+#plt.subplot()
+#(val,freq) = psd(noise,Fs=1/ts,detrend='mean')
+##plt.semilogx(freq,spl,label='SPL')
+#plt.semilogx(freq,20*np.log10(val/2.e-5),label='SPL')
+#plt.title('PSD: power spectral density')
+#plt.xlabel('Frequency')
+#plt.ylabel('PSD')
+#plt.tight_layout()
+#plt.legend()
+#plt.show
+
 
 '''
 def compute_force_pressure(bound_old, wake_old, bound_new, wake_new, pref=0, Uinfty=(1,0)): 
