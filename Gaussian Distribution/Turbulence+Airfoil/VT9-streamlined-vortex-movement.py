@@ -172,7 +172,7 @@ def naca_airfoil(code, num_points, zero_thick_te=False, uniform=False):
 # In[5]:
 
 
-q = naca_airfoil(0012, 101)
+q = naca_airfoil(0012, 11)
 
 
 # ### Collacation point (obervations point on the airfoil where the vortex influence will be captured)
@@ -194,7 +194,7 @@ q_mid = (q[1:] + q[:-1])/2
 
 
 import numpy as np
-x_start, x_end = -5.0, 2.0
+x_start, x_end = -1.0, 2.0
 y_start, y_end = -0.5, 0.5
 ylim = y_start, y_end
 
@@ -215,7 +215,7 @@ pts = np.asarray(pts)
 x, y = np.asarray(pts).transpose()
 # print (x,y)
 
-n = 1000
+n = 300
 a = np.zeros((1,n))
 b = np.zeros((1,n))
 
@@ -278,8 +278,9 @@ savetxt('utheta.txt',np.column_stack(utheta), fmt='%0.5f', delimiter=',')
 uind = utheta * dist[::-1] # dim 2 x timesteps x N
 # print uind
 uind[0] *= -1 # change sign for ux (to get correct rotation)
+uindT = uind.T
 # print uind
-# print uind.T
+print uind.T
 savetxt('utheta_mag_i_j.txt',np.column_stack((utheta,uind[0],uind[1])), fmt='%0.5f', delimiter=',')
 # utot = uind.sum(2) # dim 2 x timesteps
 # print utot
