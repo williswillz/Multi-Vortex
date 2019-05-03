@@ -242,7 +242,7 @@ print gamma, rho
 # In[11]:
 
 
-#gamma = 1.035260581
+gamma = 1.035260581
 #gamma = 10
 # rho = 0.9
 utheta = 16 * gamma * (rho**(-3)) * np.exp(-8*(rho**(-4)) * r**2) * (3-(16 * (rho**(-4)) * r**2)) * r   # Mexican-hat shape
