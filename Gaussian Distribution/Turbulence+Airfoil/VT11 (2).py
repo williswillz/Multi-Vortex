@@ -373,10 +373,10 @@ plt.legend()
 #plt.savefig('SPL1.pdf')
 plt.show
 
-#print F
-#print F[:,0] # just one panel
-#print len(F[:,0])
-#sp = numpy.fft.fft(F[:,0], n=3000)
+# In[14]:
+
+
+sp = numpy.fft.fft(dp)
 
 #freq = fftfreq(3000)
 #print freq

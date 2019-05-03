@@ -124,7 +124,7 @@ pyplot.fill([panel.xc for panel in panels],
 pyplot.axis('scaled', adjustable='box')
 pyplot.xlim(x_start, x_end)
 pyplot.ylim(y_start, y_end)
-pyplot.ylim(1,-1)
+#pyplot.ylim(1,-1)
 #pyplot.title('Streamlines around a NACA 0012 airfoil (AoA = ${}^o$)'.format(alpha), fontsize=16);
 # savefig('Velo_NACA'+'_'+str(int(m*100))+str(int(p*10))+str(int(t*100))+'.pdf')
 show()
@@ -179,7 +179,7 @@ def naca_airfoil(code, num_points, zero_thick_te=False, uniform=False):
 # In[6]:
 
 
-q = naca_airfoil(0012, 11)
+q = naca_airfoil(0012, 101)
 
 
 # ### Collacation point (obervations point on the airfoil where the vortex influence will be captured)
@@ -217,22 +217,24 @@ random_y(ylim)
 pts = [] # empty list
 pts = list(pts)
 pts=((x_start, random_y(ylim)[0]))
+#pts = (-1, 0.05)
 # pts=((x_start, 0))
 # print pts
 pts = np.asarray(pts)
 x, y = np.asarray(pts).transpose()
 print (x,y)
 
-n = 300
-a = np.zeros((1,n))
-b = np.zeros((1,n))
 
-for i in range(0,n):
+# In[8]:
 
-    dt = 0.01
-#    u, v = get_velocity_field(panels, freestream, x, y)
-#    print (u,v)
+t0 = x_start  #start time for observation of convection
+t1 = x_start + 3   #end time
+dt = 0.001 # time step
+t = np.arange(t0,t1,dt) # number of time-steps
+a = np.zeros((1,len(t)))
+b = np.zeros((1,len(t)))
 
+for i in range(0,len(t)):
     vel = (np.asarray(get_velocity_field(panels, freestream, x, y))).T
 #    print (vel)
     pts = pts + (vel*dt)
@@ -242,7 +244,7 @@ for i in range(0,n):
     b[0,i] = y
     
 vortX = np.vstack((a,b))
-print vortX
+#print vortX
 
 plt.figure(figsize=(15, 5))
 plt.plot(vortX[0],vortX[1],label='streamline')
@@ -253,9 +255,9 @@ plt.title('tracer particle',fontsize=16)
 plt.xlabel('x',fontsize=16)
 plt.ylabel('y',fontsize=16)
 pyplot.axis('scaled', adjustable='box')
-pyplot.xlim(-1,2)
+#pyplot.xlim(-1,2)
 pyplot.ylim(-0.5,0.5)
-plt.savefig('tracer.pdf')
+#plt.savefig('tracer.pdf')
 plt.show
 
 
@@ -292,7 +294,7 @@ print gamma, rho
 
 
 gamma = 1.035260581
-# gamma = 10
+#gamma = 10
 # rho = 0.9
 utheta = 16 * gamma * (rho**(-3)) * np.exp(-8*(rho**(-4)) * r**2) * (3-(16 * (rho**(-4)) * r**2)) * r   # Mexican-hat shape
 # utheta = format(utheta)
@@ -336,7 +338,7 @@ dp_ = np.diff(p, axis=0)
 dp = dp_ * lengths
 #dp = dp*lengths
 # print len(p)
-F = dp * lengths
+F = dp_ * lengths
 # print F
 G = F.sum(axis=1) # dim 2 x timesteps
 # print len(G)
@@ -366,7 +368,7 @@ p_acoustic_1 = p_acoustic[0,:,:].sum(axis=1)
 
 H_NC = ((np.abs(p_acoustic_1))/(2.e-5))**2
 # print H
-(val_NC, freq_NC) = psd(H_NC,Fs=1/dt,detrend='mean')
+(val_NC, freq_NC) = psd(H_NC,NFFT=1024,Fs=1/dt,detrend='mean')
 SPL = 10*np.log10(val_NC)
 #savetxt('SPL.csv', np.column_stack((freq,SPL)), fmt='%0.5f', delimiter=',')
 # print SPL
@@ -375,24 +377,40 @@ SPL = 10*np.log10(val_NC)
 plt.semilogx(freq_NC,10*np.log10(val_NC),label='SPL')
 plt.title('Sound Pressure Level (dB)')
 plt.xlabel('Frequency')
-plt.ylabel('SPL, dB')
+plt.ylabel('SPL, dB',labelpad=1.5)
+grid(color='0.5',linestyle=':',linewidth=0.2)
 plt.legend()
 #plt.savefig('SPL1.pdf')
 plt.show
 
-#print F
-#print F[:,0] # just one panel
-#print len(F[:,0])
-#sp = numpy.fft.fft(F[:,0], n=3000)
+# In[14]:FREQUENCY DOMAIN
+#sp = numpy.fft.fft(dp_)
+sp = numpy.fft.fft(p)
+sp = numpy.delete(sp, (0), axis=0)
+lengths_fft = lengths[np.newaxis]
+freqfft = np.fft.fftfreq(len(t)-1)
 
-#freq = fftfreq(3000)
-#print freq
-#plt.plot(freq, sp)
-#plt.xlim(0,0.19)
-#plt.ylim(-5,5)
-#plt.show()
+mat = (freqfft * r_.T).T
+mat1 = (2*np.pi/340)*(-1J)
+mat2 = np.exp(mat1*mat) #exp(-jkr)
+#
+#mat3 = np.multiply(sp,mat2)
+#mat4 = mat3.sum(axis=1)
+#
+#mat5 = ((freqfft / r_.T).T) / (2*340)
+#mat6 = np.multiply(mat5,mat3)
+#mat7 = mat6.sum(axis=1)
+#mat8 = mat7 * (-1J)
+mat9 = ((1J*freqfft) / (r_.T * 340 * 2)).T
+mat10 = np.multiply(mat9,mat2,sp)
+mat14 = mat10*lengths_fft
+mat11 = mat10.sum(axis=1)
 
+mat12 = np.fft.ifft(mat11)
+L = ((np.abs(mat12.real))/(2.e-5))**2
 
+(val_L, freq_L) = psd(L,NFFT=1024,Fs=1/dt,detrend='mean')
+plt.semilogx(freq_L,10*np.log10(val_L),label='SPL')
 # In[14]:
 
 
@@ -414,7 +432,7 @@ noise = Curles_loadingNoise(1,343,1,G,dt,v0)
 # print noise
 H = ((noise)/(2.e-5))**2
 # print H
-(val, freq) = psd(H,Fs=1/dt,detrend='mean')
+(val, freq) = psd(H,NFFT=1024,Fs=1/dt,detrend='mean')
 SPL = 10*np.log10(val)
 savetxt('SPL.csv', np.column_stack((freq,SPL)), fmt='%0.5f', delimiter=',')
 # print SPL
@@ -449,9 +467,10 @@ plt.show
 # In[ ]:
 
 plt.figure(2)
-plt.subplot(1,2,1)
-plt.semilogx(freq_NC,10*np.log10(val_NC),label='SPL_NC') # compact source
-plt.semilogx(freq,10*np.log10(val),label='SPL') # non-compact source
+#plt.subplot(1,2,1)
+plt.semilogx(freq_NC,10*np.log10(val_NC),label='SPL_time retardation',color='green') # compact source
+plt.semilogx(freq,10*np.log10(val),label='SPL_compact source') # non-compact source
+plt.semilogx(freq_L,10*np.log10(val_L),label='SPL_t-f-t')
 plt.legend()
 #plt.subplot(1,2,2)
 #(valu,freq) = psd(utot[0],Fs=1/ts,detrend='mean')
