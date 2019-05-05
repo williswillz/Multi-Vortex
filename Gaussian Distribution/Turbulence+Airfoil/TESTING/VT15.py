@@ -3,7 +3,7 @@
 Created on Fri May  3 03:51:17 2019
 
 @author: WS1
-"""
+
 
 # ### Tasks
 
@@ -12,6 +12,7 @@ Created on Fri May  3 03:51:17 2019
 - compute the farfield sound pressure for any combination of these
 - put together the farfield sound pressures for a certain vortex distribution using proper delays and scaling on the individual farfield sound pressures (this is easily done for 10000 vortices if needed)
 - compare the results to reference (Amiet, Gershfeld, HiFi methods)
+"""
 # ### Libraries
 # In[2]:
 
@@ -29,7 +30,7 @@ from matplotlib import pyplot
 from pylab import *
 from sympy.abc import x, y
 import essentials
-
+import h5py
 
 # ### Steady background flow around the airfoil
 # #### Solved using the steady vortex particle panel code 'steapy'.
@@ -164,15 +165,22 @@ def random_y(ylim):
 random_y(ylim)
 # print (random_y)
 
-
-pts = [] # empty list
-pts = list(pts)
-pts=((x_start, random_y(ylim)[0]))
-#pts = (-1, 0.05)
-# pts=((x_start, 0))
-# print pts
-pts = np.asarray(pts)
-x, y = np.asarray(pts).transpose()
+pts_y = np.arange(-1,1,0.1)
+pts_x = (np.ones_like(pts_y))*-1
+#pts_y = [0.05]
+#pts_x = -1
+pts =  np.vstack((pts_x,pts_y))
+pts = pts[np.newaxis]
+#pts = [] # empty list
+#pts = list(pts)
+#pts=((x_start, random_y(ylim)[0]))
+##pts = (-1, 0.05)
+## pts=((x_start, 0))
+## print pts
+#pts = np.asarray(pts)
+x = np.zeros((len(pts_y)))
+y = np.zeros((len(pts_y)))
+x[:], y[:] = np.asarray(pts[0,:,:].T).transpose()
 print (x,y)
 
 
@@ -180,25 +188,38 @@ print (x,y)
 
 t0 = x_start  #start time for observation of convection
 t1 = x_start + 3   #end time
-dt = 0.001 # time step
+dt = 0.01 # time step
 t = np.arange(t0,t1,dt) # number of time-steps
-a = np.zeros((1,len(t)))
-b = np.zeros((1,len(t)))
+a = np.zeros((len(pts_y),len(t)))
+b = np.zeros((len(pts_y),len(t)))
+#xx = np.zeros((len(pts_y),len(t)))
+#yy = np.zeros((len(pts_y),len(t)))
 
 for i in range(0,len(t)):
-    vel = (np.asarray(get_velocity_field(panels, freestream, x, y))).T
+    vel = (((np.asarray(get_velocity_field(panels, freestream, x[:], y[:]))))[np.newaxis]).T
 #    print (vel)
-    pts = pts + (vel*dt)
-    x, y = np.asarray(pts).transpose()
-#     print (pts)
-    a[0,i] = x
-    b[0,i] = y
+    pts[0,:,:] = pts[0,:,:] + ((vel*dt).T)
+#    pts[:,:,0] = pts[:,:,0] + (vel*dt)
+    x[:], y[:] = np.asarray(pts[0,:,:].T).transpose()
     
-vortX = np.vstack((a,b))
+#    x, y = np.asarray(pts).transpose()
+#     print (pts)
+    a[:,i] = x[:]
+    b[:,i] = y[:]
+    
+#vortX = np.vstack((a,b)))
+vortX = a
+vortX = vortX[np.newaxis,:,:]
+vortY = b
+vortY = vortY[np.newaxis,:,:]
+vortZ = np.vstack((vortX,vortY))
+#np.append(vortX[:,:,:], b, axis=0) 
+#vortX = vortX[:,np.newaxis,:]
 #print vortX
-
+'''
 plt.figure(figsize=(15, 5))
-plt.plot(vortX[0],vortX[1],label='streamline')
+plt.plot(vortX[11,:],vortX[31,:],label='streamline')
+#plt.plot(a[9,:],b[9,:],label='streamline')
 pyplot.fill([panel.xc for panel in panels],
            [panel.yc for panel in panels],
            color='k', linestyle='solid', linewidth=2, zorder=3)
@@ -207,10 +228,10 @@ plt.xlabel('x',fontsize=16)
 plt.ylabel('y',fontsize=16)
 pyplot.axis('scaled', adjustable='box')
 #pyplot.xlim(-1,2)
-pyplot.ylim(-0.5,0.5)
-#plt.savefig('tracer.pdf')
+pyplot.ylim(-1.2,1.2)
+plt.savefig('tracer_.pdf')
 plt.show
-
+'''
 
 # ### Calculating distance between the vortex and each panel on airfoil surface
 
@@ -222,9 +243,18 @@ obsx = q_mid[:,0]
 obsy = q_mid[:,1]
 obsX = np.vstack((obsx,obsy))
 # print obsX
-dist = obsX[:,:,np.newaxis]-vortX[:,np.newaxis,:] # dim 2 x timesteps x N
+#dist = obsX[:,:,np.newaxis]-vortX[:,np.newaxis,:] # dim 2 x timesteps x N
+obsX = obsX[:,np.newaxis,:]
+obsX = np.hstack(([obsX]*len(pts_y)))
+obsX = obsX[:,:,:,np.newaxis]
+vortZ = vortZ[:,:,np.newaxis,:]
+dist = obsX-vortZ# dim 2 x timesteps x N
 r = np.sqrt((dist*dist).sum(0)) # dim timesteps x N
 print r
+with h5py.File('r.h5', 'w') as hf:
+    hf.create_dataset("dataset",  data=r)
+#with h5py.File('aaa.h5', 'w') as hf:
+#    hf.create_dataset("dataset",  data=aaa)
 
 
 # ### Vortex strength and size
@@ -235,7 +265,7 @@ print r
 gammas = 1. #vortex strength RMS (normal distribution)
 rscale = 0.5 #vortex size scale (rayleigh distribution parameter)
 gamma = np.random.normal(scale=gammas)
-rho = np.random.rayleigh(scale=rscale)
+rho = np.random.rayleigh(scale=rscale, size = 10)
 print gamma, rho
 
 
@@ -243,21 +273,36 @@ print gamma, rho
 
 # In[11]:
 
-
+gamma = 1.
 #gamma = 1.035260581
 #gamma = 10
-# rho = 0.9
-utheta = 16 * gamma * (rho**(-3)) * np.exp(-8*(rho**(-4)) * r**2) * (3-(16 * (rho**(-4)) * r**2)) * r   # Mexican-hat shape
+#rho = np.array([0.9])
+#r = aaa**0.5
+r = r[np.newaxis]
+r = np.vstack(([r]*len(rho)))
+rho = (rho[:,np.newaxis]).T
+savetxt('rho.csv',np.column_stack(rho), fmt='%0.5f', delimiter=',')
+
+utheta = 16 * gamma * (rho[:,0]**(-3)) * np.exp(-8*(rho[:,0]**(-4)) * r[:,:,:,:]**2) * (3-(16 * (rho[:,0]**(-4)) * r[:,:,:,:]**2)) * r[:,:,:,:]   # Mexican-hat shape
 # utheta = format(utheta)
 # print utheta
-savetxt('utheta.txt',np.column_stack(utheta), fmt='%0.5f', delimiter=',')
-uind = utheta * dist[::-1] # dim 2 x timesteps x N
+with h5py.File('utheta.h5', 'w') as hf:
+    hf.create_dataset("dataset",  data=utheta)
+#savetxt('utheta.txt',np.column_stack(utheta), fmt='%0.5f', delimiter=',')
+
+dist = dist[:,np.newaxis,:,:,:]
+dist = np.vstack(([dist]*len(rho)))
+uind = utheta * dist # dim 2 x timesteps x N
 # print uind
-uind[0] *= -1 # change sign for ux (to get correct rotation)
-ux = uind[0].T
+uind[0,:,:,:,:] *= -1 # change sign for ux (to get correct rotation)
+ux = uind[0,:,:,:,:].T
 # print uind
 # print uind.T
-savetxt('utheta_mag_i_j.txt',np.column_stack((utheta,uind[0],uind[1])), fmt='%0.5f', delimiter=',')
+#with h5py.File('uind.h5', 'w') as hf:
+#    hf.create_dataset("dataset",  data=uind)
+with h5py.File('ux.h5', 'w') as hf:
+    hf.create_dataset("dataset",  data=ux)
+#savetxt('utheta_mag_i_j.txt',np.column_stack((utheta,uind[0],uind[1])), fmt='%0.5f', delimiter=',')
 # utot = uind.sum(2) # dim 2 x timesteps
 # print utot
 
@@ -278,18 +323,20 @@ lengths = np.linalg.norm(dq, axis=1)
 normals = np.transpose(np.array([dq[:,1], -dq[:,0]]) / lengths)
 tangents = -np.transpose(np.array([dq[:,0], dq[:,1]]) / lengths)
 # print tangents
-utot_tangent = uind.T * tangents #old
+#utot_tangent = uind.T * tangents #old
 #utheta_ = utheta[np.newaxis] #new
 #utot_tangent = utheta_.T * tangents #new
 # utot_tangent = uind.T
 # print utot_tangent
 # print utot_tangent[:,:,0]
-utot_tangent_magnitude = pow((pow(utot_tangent[:,:,0],2) + pow(utot_tangent[:,:,1],2)), 0.5)
+#utot_tangent_magnitude = pow((pow(utot_tangent[:,:,0],2) + pow(utot_tangent[:,:,1],2)), 0.5)
 # print utot_tangent_magnitude
 p_ref =0
 #p = p_ref + (0.5 * 1.225 * (1**2 - utot_tangent_magnitude**2))
 '''taking uind[0] which is x component velocity'''
 p = p_ref + (0.5 * 1.225 * (v0**2 - ux**2))
+with h5py.File('p.h5', 'w') as hf:
+    hf.create_dataset("dataset",  data=p)
 savetxt('p.csv',np.column_stack(p), fmt='%0.5f', delimiter=',')
 dp_ = np.diff(p, axis=0)
 dp = dp_ * lengths

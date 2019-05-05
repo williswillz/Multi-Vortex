@@ -165,8 +165,8 @@ random_y(ylim)
 
 pts = [] # empty list
 pts = list(pts)
-pts=((x_start, random_y(ylim)[0]))
-#pts = (-1, 0.05)
+#pts=((x_start, random_y(ylim)[0]))
+pts = (-1, -0.1) #fixed position for testing 
 # pts=((x_start, 0))
 # print pts
 pts = np.asarray(pts)
@@ -178,7 +178,7 @@ print (x,y)
 
 t0 = x_start  #start time for observation of convection
 t1 = x_start + 3   #end time
-dt = 0.001 # time step
+dt = 0.01 # time step
 t = np.arange(t0,t1,dt) # number of time-steps
 a = np.zeros((1,len(t)))
 b = np.zeros((1,len(t)))
@@ -221,8 +221,10 @@ obsy = q_mid[:,1]
 obsX = np.vstack((obsx,obsy))
 # print obsX
 dist = obsX[:,:,np.newaxis]-vortX[:,np.newaxis,:] # dim 2 x timesteps x N
+savetxt('dist.csv',np.column_stack(dist), fmt='%0.5f', delimiter=',')
 r = np.sqrt((dist*dist).sum(0)) # dim timesteps x N
 print r
+savetxt('r.csv',np.column_stack(r), fmt='%0.5f', delimiter=',')
 
 
 # ### Vortex strength and size
@@ -243,16 +245,20 @@ print gamma, rho
 
 
 #gamma = 1.035260581
+gamma = 1.
 #gamma = 10
-# rho = 0.9
+rho = 0.530253
+
 utheta = 16 * gamma * (rho**(-3)) * np.exp(-8*(rho**(-4)) * r**2) * (3-(16 * (rho**(-4)) * r**2)) * r   # Mexican-hat shape
 # utheta = format(utheta)
 # print utheta
-savetxt('utheta.txt',np.column_stack(utheta), fmt='%0.5f', delimiter=',')
+#savetxt('utheta.txt',np.column_stack(utheta), fmt='%0.5f', delimiter=',')
+savetxt('utheta.csv',np.column_stack(utheta), fmt='%0.5f', delimiter=',')
 uind = utheta * dist[::-1] # dim 2 x timesteps x N
 # print uind
 uind[0] *= -1 # change sign for ux (to get correct rotation)
 ux = uind[0].T
+savetxt('ux.csv',np.column_stack(ux), fmt='%0.5f', delimiter=',')
 # print uind
 # print uind.T
 savetxt('utheta_mag_i_j.txt',np.column_stack((utheta,uind[0],uind[1])), fmt='%0.5f', delimiter=',')
@@ -374,7 +380,10 @@ mat2 = np.exp(mat1*mat) #exp(-jkr)
 #mat6 = np.multiply(mat5,mat3)
 #mat7 = mat6.sum(axis=1)
 #mat8 = mat7 * (-1J)
-mat9 = ((1J*freqfft) / (((r_.T)**2) * 340 * 2)).T
+'''with J.omega outside'''
+#mat9 = ((1J*freqfft) / (((r_.T)**2) * 340 * 2)).T
+'''without J.omega'''
+mat9 = ((1*1) / (((r_.T)**2) * 340 * (np.pi*4))).T
 mat10 = np.multiply(mat9,mat2,sp)
 mat14 = mat10*lengths_fft
 mat11 = mat14.sum(axis=1)
@@ -444,6 +453,7 @@ plt.figure(2)
 plt.semilogx(freq_NC,10*np.log10(val_NC),label='SPL_time domain',color='green') # compact source
 plt.semilogx(freq,10*np.log10(val),label='SPL_time domain-compact source') # non-compact source
 plt.semilogx(freq_L,10*np.log10(val_L),label='SPL_frequency domain')
+plt.xlim()
 plt.legend()
 savefig('acoustic.pdf')
 #plt.subplot(1,2,2)
