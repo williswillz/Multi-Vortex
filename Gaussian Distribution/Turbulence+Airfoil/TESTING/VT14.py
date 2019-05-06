@@ -245,9 +245,9 @@ print gamma, rho
 
 
 #gamma = 1.035260581
-gamma = 1.
+#gamma = 1.
 #gamma = 10
-rho = 0.530253
+#rho = 0.530253
 
 utheta = 16 * gamma * (rho**(-3)) * np.exp(-8*(rho**(-4)) * r**2) * (3-(16 * (rho**(-4)) * r**2)) * r   # Mexican-hat shape
 # utheta = format(utheta)
@@ -327,7 +327,7 @@ tau = dt - (r_/340)
 
 #p_acoustic = (((obs_X*(normals.T)).sum(0))/(4*np.pi*340)) * ((dp/(tau*(r_**2)))[np.newaxis]) wrong r_cap
 #normalst = normals.T
-nr = (dist_[:,0,:]*normals.T)
+nr = (dist_[:,0,:]*normals.T).sum(0)
 p_acoustic = (((dist_[:,0,:]*normals.T).sum(0))/(4*np.pi*340)) * ((dp/(tau*(r_**2)))[np.newaxis])
 #var_1 = (dp/(tau*(r_**2)))[np.newaxis]
 p_acoustic_1 = p_acoustic[0,:,:].sum(axis=1)
