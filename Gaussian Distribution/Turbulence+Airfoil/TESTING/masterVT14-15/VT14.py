@@ -384,7 +384,8 @@ mat2 = np.exp(mat1*mat) #exp(-jkr)
 #mat9 = ((1J*freqfft) / (((r_.T)**2) * 340 * 2)).T
 '''without J.omega'''
 mat9 = ((1*1) / (((r_.T)**2) * 340 * (np.pi*4))).T
-mat10 = np.multiply(mat9,mat2,sp)
+mat10_ = np.multiply(mat9,mat2)
+mat10 = np.multiply(mat10_,sp)
 mat14 = mat10*lengths_fft
 mat11 = mat14.sum(axis=1)
 

@@ -5,6 +5,7 @@ Created on Wed May  1 20:25:47 2019
 @author: WS1
 """
 import numpy as np
+import math
 
 def naca_airfoil(code, num_points, zero_thick_te=False, uniform=False):
     """Return a NACA 4-digit series airfoil"""
@@ -41,3 +42,7 @@ def naca_airfoil(code, num_points, zero_thick_te=False, uniform=False):
     y = np.hstack([y_camber[-1:0:-1] + y_thick[-1:0:-1],
                    y_camber - y_thick])
     return (np.array([x, y]).T)
+
+def round_up(array, decimals=0):
+    multiplier = 10 ** decimals
+    return np.ceil(array * multiplier) / multiplier

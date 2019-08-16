@@ -466,15 +466,16 @@ mat9 = mat9[np.newaxis]
 mat9 = np.vstack(([mat9]*len(rho[0,:])))
 mat9 = mat9.T
 
-
-mat10 = np.multiply(mat9,mat2,sp)
+mat10_ = np.multiply(mat9,mat2)
+mat10 = np.multiply(mat10_,sp)
+#mat10 = np.multiply(mat9,mat2,sp)
 
 lengths_fft = lengths_fft[:,:,:,np.newaxis] #cis it possile to achieve this wwithout multplying by len(rho) and len(pts_y)?
 mat14 = mat10*lengths_fft
 mat11 = mat14.sum(axis=1)
 
 mat12 = np.fft.ifft(mat11)
-L = ((np.abs(mat12.real))/(2.e-5))**2
+L = ((np.abs(2*mat12.real))/(2.e-5))**2
 
 (val_L, freq_L) = psd(L,Fs=1/dt,detrend='mean')
 plt.semilogx(freq_L,10*np.log10(val_L),label='SPL')
