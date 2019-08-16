@@ -165,6 +165,7 @@ def random_y(ylim):
 random_y(ylim)
 # print (random_y)
 
+#pts_y = np.arange(-1,1,0.1)
 pts_y = np.arange(-1,1,0.1)
 pts_x = (np.ones_like(pts_y))*-1
 #pts_y = [0.05]
@@ -273,7 +274,7 @@ print gamma, rho
 
 # In[11]:
 
-gamma = 1.
+#gamma = 1.
 #gamma = 1.035260581
 #gamma = 10
 #rho = np.array([0.9])
@@ -291,7 +292,7 @@ with h5py.File('utheta.h5', 'w') as hf:
 #savetxt('utheta.txt',np.column_stack(utheta), fmt='%0.5f', delimiter=',')
 
 dist = dist[:,np.newaxis,:,:,:]
-dist = np.vstack(([dist]*len(rho)))
+dist = np.vstack(([dist]*len(rho[0,:])))
 uind = utheta * dist # dim 2 x timesteps x N
 # print uind
 uind[0,:,:,:,:] *= -1 # change sign for ux (to get correct rotation)
@@ -335,19 +336,20 @@ p_ref =0
 #p = p_ref + (0.5 * 1.225 * (1**2 - utot_tangent_magnitude**2))
 '''taking uind[0] which is x component velocity'''
 p = p_ref + (0.5 * 1.225 * (v0**2 - ux**2))
-with h5py.File('p.h5', 'w') as hf:
-    hf.create_dataset("dataset",  data=p)
-savetxt('p.csv',np.column_stack(p), fmt='%0.5f', delimiter=',')
+#with h5py.File('p.h5', 'w') as hf:
+#    hf.create_dataset("dataset",  data=p)
+#savetxt('p.csv',np.column_stack(p), fmt='%0.5f', delimiter=',')
 dp_ = np.diff(p, axis=0)
-dp = dp_ * lengths
+lengths = lengths[:,np.newaxis]
+dp = dp_.T * lengths
 #dp = dp*lengths
 # print len(p)
-F = dp_ * lengths
+#F = dp_ * lengths
 # print F
-G = F.sum(axis=1) # dim 2 x timesteps
+#G = F.sum(axis=1) # dim 2 x timesteps
 # print len(G)
-cp = (1 - ((utot_tangent_magnitude**2)/v0**2))
-cp = cp * normals[:,1]
+#cp = (1 - ((utot_tangent_magnitude**2)/v0**2))
+#cp = cp * normals[:,1]
 # print cp
 
 
@@ -370,13 +372,40 @@ tau = dt - (r_/340)
 
 #p_acoustic = (((obs_X*(normals.T)).sum(0))/(4*np.pi*340)) * ((dp/(tau*(r_**2)))[np.newaxis]) wrong r_cap
 #normalst = normals.T
-nr = (dist_[:,0,:]*normals.T)
-p_acoustic = (((dist_[:,0,:]*normals.T).sum(0))/(4*np.pi*340)) * ((dp/(tau*(r_**2)))[np.newaxis])
-#var_1 = (dp/(tau*(r_**2)))[np.newaxis]
-p_acoustic_1 = p_acoustic[0,:,:].sum(axis=1)
+dp = dp.T
+nr = ((dist_[:,0,:]*normals.T).sum(0))
+nr = nr.T
+nr = nr[np.newaxis]
+nr = np.vstack(([nr]*len(pts_y)))
+nr = nr[np.newaxis]
+#nr = np.vstack(([nr]*len(rho)))
+nr = np.vstack(([nr]*len(rho[0,:])))
+nr = nr.T
 
-H_NC = ((np.abs(p_acoustic_1))/(2.e-5))**2
-# print H
+tau_ = (tau*(r_**2))
+tau_ = tau_.T
+tau_ = tau_[np.newaxis]
+tau_ = np.vstack(([tau_]*len(pts_y)))
+tau_ = tau_[np.newaxis]
+tau_ = np.vstack(([tau_]*len(rho[0,:])))
+tau_ = tau_.T
+#p_acoustic = (((dist_[:,0,:]*normals.T).sum(0))/(4*np.pi*340)) * ((dp/(tau*(r_**2)))[np.newaxis])
+p_acoustic = ((nr)/(4*np.pi*340)) * ((dp/tau_)[np.newaxis])
+with h5py.File('p_acoustic.h5', 'w') as hf:
+    hf.create_dataset("dataset",  data=p_acoustic)
+#var_1 = (dp/(tau*(r_**2)))[np.newaxis]
+p_acoustic_1 = p_acoustic[0,:,:,:,:].sum(axis=1)
+with h5py.File('p_acoustic_1.h5', 'w') as hf:
+    hf.create_dataset("dataset",  data=p_acoustic_1)
+savetxt('p_acoustic_1.csv', np.column_stack((p_acoustic_1)), fmt='%0.5f', delimiter=',')
+
+
+p_acoustic_2 = ((np.abs(p_acoustic_1))/(2.e-5))**2
+with h5py.File('p_acoustic_2.h5', 'w') as hf:
+    hf.create_dataset("dataset",  data=p_acoustic_2)
+savetxt('p_acoustic_2.csv', np.column_stack((p_acoustic_2)), fmt='%0.5f', delimiter=',')
+    
+    # In[10]:
 (val_NC, freq_NC) = psd(H_NC,Fs=1/dt,detrend='mean')
 SPL = 10*np.log10(val_NC)
 #savetxt('SPL.csv', np.column_stack((freq,SPL)), fmt='%0.5f', delimiter=',')
@@ -401,7 +430,8 @@ FREQUENCY DOMAIN
 #p2 = p1[:,:,:] * r_cap
 #p2 = p1 * r_cap
 p3 = ((dist_[:,0,:]*normals.T).sum(0))
-p4 = p*p3.T
+#p4 = p*p3.T
+p4 = p*nr
 '''
 important
 '''
@@ -414,7 +444,13 @@ freqfft = np.fft.fftfreq(len(t)-1)
 
 mat = (freqfft * r_.T).T
 mat1 = (2*np.pi/340)*(-1J)
-mat2 = np.exp(mat1*mat) #exp(-jkr)
+mat2 = np.exp(mat1*mat)
+mat2 = mat2.T #exp(-jkr)
+mat2 = mat2[np.newaxis]
+mat2 = np.vstack(([mat2]*len(pts_y)))
+mat2 = mat2[np.newaxis]
+mat2 = np.vstack(([mat2]*len(rho[0,:])))
+mat2 = mat2.T
 #
 #mat3 = np.multiply(sp,mat2)
 #mat4 = mat3.sum(axis=1)
@@ -423,13 +459,23 @@ mat2 = np.exp(mat1*mat) #exp(-jkr)
 #mat6 = np.multiply(mat5,mat3)
 #mat7 = mat6.sum(axis=1)
 #mat8 = mat7 * (-1J)
-mat9 = ((1J*freqfft) / (((r_.T)**2) * 340 * 2)).T
-mat10 = np.multiply(mat9,mat2,sp)
+mat9 = ((1J*freqfft) / (((r_.T)**2) * 340 * 2))
+mat9 = mat9[np.newaxis]
+mat9 = np.vstack(([mat9]*len(pts_y)))
+mat9 = mat9[np.newaxis]
+mat9 = np.vstack(([mat9]*len(rho[0,:])))
+mat9 = mat9.T
+
+mat10_ = np.multiply(mat9,mat2)
+mat10 = np.multiply(mat10_,sp)
+#mat10 = np.multiply(mat9,mat2,sp)
+
+lengths_fft = lengths_fft[:,:,:,np.newaxis] #cis it possile to achieve this wwithout multplying by len(rho) and len(pts_y)?
 mat14 = mat10*lengths_fft
 mat11 = mat14.sum(axis=1)
 
 mat12 = np.fft.ifft(mat11)
-L = ((np.abs(mat12.real))/(2.e-5))**2
+L = ((np.abs(2*mat12.real))/(2.e-5))**2
 
 (val_L, freq_L) = psd(L,Fs=1/dt,detrend='mean')
 plt.semilogx(freq_L,10*np.log10(val_L),label='SPL')

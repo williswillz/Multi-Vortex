@@ -165,9 +165,9 @@ random_y(ylim)
 
 pts = [] # empty list
 pts = list(pts)
-#pts=((x_start, random_y(ylim)[0]))
-pts = (-1, -0.1) #fixed position for testing 
-# pts=((x_start, 0))
+pts=((x_start, random_y(ylim)[0]))
+pts = (-1.0, -0.1) #fixed position for testing 
+#pts=((x_start, -0.1))
 # print pts
 pts = np.asarray(pts)
 x, y = np.asarray(pts).transpose()
@@ -177,8 +177,8 @@ print (x,y)
 # In[8]:
 
 t0 = x_start  #start time for observation of convection
-t1 = x_start + 3   #end time
-dt = 0.01 # time step
+t1 = x_start + 3  #end time
+dt = 0.001 # time step
 t = np.arange(t0,t1,dt) # number of time-steps
 a = np.zeros((1,len(t)))
 b = np.zeros((1,len(t)))
@@ -205,7 +205,8 @@ plt.xlabel('x',fontsize=16)
 plt.ylabel('y',fontsize=16)
 pyplot.axis('scaled', adjustable='box')
 #pyplot.xlim(-1,2)
-pyplot.ylim(-0.5,0.5)
+pyplot.ylim(-0.1,0.1)
+#pyplot.ylim(-0.5,0.5)
 #plt.savefig('tracer.pdf')
 plt.show
 
@@ -243,11 +244,15 @@ print gamma, rho
 
 # In[11]:
 
-
+#gamma = 100
+gamma = 1.035260581
+# gamma = 10
+rho = 0.9
+#rho = 0.73485
 #gamma = 1.035260581
-gamma = 1.
+#gamma = 1.
 #gamma = 10
-rho = 0.530253
+#rho = 0.530253
 
 utheta = 16 * gamma * (rho**(-3)) * np.exp(-8*(rho**(-4)) * r**2) * (3-(16 * (rho**(-4)) * r**2)) * r   # Mexican-hat shape
 # utheta = format(utheta)
@@ -323,15 +328,15 @@ dist_ = obs_X[:,:,np.newaxis]-vort_X[:,np.newaxis,:] # dim 2 x timesteps x N
 r_ = np.sqrt((dist_*dist_).sum(0)) # dim timesteps x N
 #print r_
 r_cap = dist_[:,0,:] / r_
-tau = dt - (r_/340)
+tau = dt - (r_/340) 
+#tau = dt - (r_/340) + 1/1
 
 #p_acoustic = (((obs_X*(normals.T)).sum(0))/(4*np.pi*340)) * ((dp/(tau*(r_**2)))[np.newaxis]) wrong r_cap
 #normalst = normals.T
-nr = (dist_[:,0,:]*normals.T)
+nr = (dist_[:,0,:]*normals.T).sum(0)
 p_acoustic = (((dist_[:,0,:]*normals.T).sum(0))/(4*np.pi*340)) * ((dp/(tau*(r_**2)))[np.newaxis])
 #var_1 = (dp/(tau*(r_**2)))[np.newaxis]
 p_acoustic_1 = p_acoustic[0,:,:].sum(axis=1)
-
 H_NC = ((np.abs(p_acoustic_1))/(2.e-5))**2
 # print H
 (val_NC, freq_NC) = psd(H_NC,Fs=1/dt,detrend='mean')
@@ -340,6 +345,7 @@ SPL = 10*np.log10(val_NC)
 # print SPL
 #plt.savefig('SPL.pdf')
 #print freq
+plt.figure(2)
 plt.semilogx(freq_NC,10*np.log10(val_NC),label='SPL')
 plt.title('Sound Pressure Level (dB)')
 plt.xlabel('Frequency')
@@ -348,7 +354,10 @@ grid(color='0.5',linestyle=':',linewidth=0.2)
 plt.legend()
 #plt.savefig('SPL1.pdf')
 plt.show
-
+plt.figure()
+plt.plot(p_acoustic_1)
+#plt.xlim(450,1000)
+plt.show
 # In[14]:
 '''
 FREQUENCY DOMAIN
@@ -364,6 +373,7 @@ important
 '''
 sp = numpy.fft.fft(p4) 
 sp = numpy.delete(sp, (0), axis=0)
+#sp = numpy.delete(numpy.fft.fft(p4), (0), axis=0)
 lengths_fft = lengths[np.newaxis]
 freqfft = np.fft.fftfreq(len(t)-1)
 
@@ -381,18 +391,34 @@ mat2 = np.exp(mat1*mat) #exp(-jkr)
 #mat7 = mat6.sum(axis=1)
 #mat8 = mat7 * (-1J)
 '''with J.omega outside'''
-#mat9 = ((1J*freqfft) / (((r_.T)**2) * 340 * 2)).T
+mat9 = ((1J*freqfft) / (((r_.T)**2) * 340 * 2)).T
 '''without J.omega'''
-mat9 = ((1*1) / (((r_.T)**2) * 340 * (np.pi*4))).T
-mat10 = np.multiply(mat9,mat2,sp)
+#mat9 = ((1*1) / (((r_.T)**2) * 340 * (np.pi*4))).T
+#mat10 = np.multiply(mat9,mat2,sp)
+mat10_ = np.multiply(mat9,mat2)
+mat10 = np.multiply(mat10_,sp)
+#mat10 = np.multiply(mat9,mat2,numpy.delete(numpy.fft.fft(p4), (0), axis=0))
 mat14 = mat10*lengths_fft
 mat11 = mat14.sum(axis=1)
 
 mat12 = np.fft.ifft(mat11)
-L = ((np.abs(mat12.real))/(2.e-5))**2
-
+L = ((np.abs(2*mat12.real))/(2.e-5))**2
+savetxt('freq-one-particle.csv', np.column_stack(L), fmt='%0.5f', delimiter=',')
 (val_L, freq_L) = psd(L,Fs=1/dt,detrend='mean')
 plt.semilogx(freq_L,10*np.log10(val_L),label='SPL')
+
+#PHASE SHIFT FOR DERIVED PARTICLES
+#mat21 = mat11 * np.exp(2*np.pi*freqfft*(-0.5))
+#mat22 = np.fft.ifft(mat21)
+#L21 = ((np.abs(2*mat22.real))/(2.e-5))**2
+#savetxt('freq-one-particle01.csv', np.column_stack(L), fmt='%0.5f', delimiter=',')
+#(val_L21, freq_L21) = psd(L21,Fs=1/dt,detrend='mean')
+#plt.semilogx(freq_L21,10*np.log10(val_L21),label='SPL')
+
+
+#plt.semilogx(freq_L21,10*np.log10(val_L21),label='SPL')
+#Pr*10^(dB1/10)
+#K = (2.e-5)*10**(((10*np.log10(val_L)/20))+(10*np.log10(val_L21)/20))
 # In[14]:
 
 
@@ -453,7 +479,8 @@ plt.figure(2)
 plt.semilogx(freq_NC,10*np.log10(val_NC),label='SPL_time domain',color='green') # compact source
 plt.semilogx(freq,10*np.log10(val),label='SPL_time domain-compact source') # non-compact source
 plt.semilogx(freq_L,10*np.log10(val_L),label='SPL_frequency domain')
-plt.xlim()
+#plt.semilogx(freq_L21,10*np.log10(val_L21),label='SPL_frequency domain')
+#plt.xlim(10,100)
 plt.legend()
 savefig('acoustic.pdf')
 #plt.subplot(1,2,2)

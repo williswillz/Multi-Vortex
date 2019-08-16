@@ -424,7 +424,8 @@ mat2 = np.exp(mat1*mat) #exp(-jkr)
 #mat7 = mat6.sum(axis=1)
 #mat8 = mat7 * (-1J)
 mat9 = ((1J*freqfft) / (((r_.T)**2) * 340 * 2)).T
-mat10 = np.multiply(mat9,mat2,sp)
+mat10_ = np.multiply(mat9,mat2)
+mat10 = np.multiply(mat10_,sp)
 mat14 = mat10*lengths_fft
 mat11 = mat14.sum(axis=1)
 

@@ -84,7 +84,7 @@ def L_p(x):
 blocksize=100
 j=0
 
-(werte,freq)=plt.psd(noise, NFFT=blocksize, Fs=100, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
+(werte,freq)=plt.psd(noise, Fs=1/dt, detrend=mlab.detrend_none,window=mlab.window_hanning, noverlap=4, pad_to=None,sides='default', scale_by_freq='True')
 #xx=30
 
 pegel=L_p(werte)
